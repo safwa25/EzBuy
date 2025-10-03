@@ -1,0 +1,65 @@
+
+import '../models/product_model.dart';
+
+List<Product> products = [
+  Product(
+    id: "1",
+    name: "Men Pants",
+    price: 100.0,
+    description:
+    "Some details about the product. This pant is made of high quality fabric with stylish fitting. Perfect for daily wear and casual outings.",
+    images: [
+      "assets/images/pants1.jpg",
+      "assets/images/pants2.jpg",
+      "assets/images/pants3.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["#FFA500", "#808080", "#0000FF", "#FF0000", "#000000"],
+  ),
+  Product(
+    id: "2",
+    name: "Samurai Graphic Hoodie",
+    price: 120.0,
+    description:
+    "Stand out with this bold Japanese-inspired hoodie featuring a detailed samurai and rising sun graphic. Crafted from soft, breathable cotton with a relaxed fit, it's perfect for casual outings or streetwear looks. The hoodie combines comfort and statement style effortlessly.",
+    images: [
+      "assets/images/shirt1.webp",
+      "assets/images/shirt2.webp",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+  Product(
+    id: "3",
+    name: "Retro Varsity Jacket",
+    price: 150.0,
+    description:
+    "This retro varsity jacket brings a classic vintage vibe to modern streetwear. Featuring a warm fleece interior, ribbed cuffs, and contrast sleeves, it's ideal for layering in colder weather. Pair it with jeans or joggers for an effortlessly cool look.",
+    images: [
+      "assets/images/jacket1.jpg",
+      "assets/images/jacket2.jpg",
+      "assets/images/jacket3.jpg",
+      "assets/images/jacket4.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+  Product(
+    id: "4",
+    name: "Signature Bomber Jacket",
+    price: 190.0,
+    description:
+    "Our signature bomber jacket is a must-have piece that blends casual comfort with street-style edge. Available in multiple vibrant colors, it features embroidered details on the sleeves, a zip front, and durable fabric to keep you warm and stylish.",
+    images: [
+      "assets/images/product1.jpg",
+      "assets/images/product2.jpg",
+      "assets/images/product3.jpg",
+      "assets/images/product4.jpg",
+      "assets/images/product5.jpg",
+      "assets/images/product6.jpg",
+      "assets/images/product7.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+];
