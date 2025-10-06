@@ -24,8 +24,8 @@ class _ProductListPageState extends State<ProductListPage> {
   ];
 
   void _toggleTheme() {
-    themeNotifier.value =
-    themeNotifier.value == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    final currentMode = themeNotifier.value;
+    themeNotifier.value = currentMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
   }
 
   @override
@@ -75,7 +75,7 @@ class _ProductListPageState extends State<ProductListPage> {
               return Container(
                 margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
-                  color: isDark
+                  color: isDark // Use isDarkMode here
                       ? Colors.white.withOpacity(0.1)
                       : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -90,10 +90,10 @@ class _ProductListPageState extends State<ProductListPage> {
                       );
                     },
                     child: Icon(
-                      mode == ThemeMode.dark
+                      isDark
                           ? Icons.light_mode_rounded
                           : Icons.dark_mode_rounded,
-                      key: ValueKey(mode),
+                      key: ValueKey(isDark),
                       color: mode == ThemeMode.dark
                           ? Colors.amber.shade300
                           : Colors.deepOrange.shade600,
