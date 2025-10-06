@@ -15,6 +15,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL"],
     colors: ["#FFA500", "#808080", "#0000FF", "#FF0000", "#000000"],
+    isFavorite: true
   ),
   Product(
     id: "2",
@@ -43,9 +44,118 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+    isFavorite: true
   ),
   Product(
     id: "4",
+    name: "Signature Bomber Jacket",
+    price: 190.0,
+    description:
+    "Our signature bomber jacket is a must-have piece that blends casual comfort with street-style edge. Available in multiple vibrant colors, it features embroidered details on the sleeves, a zip front, and durable fabric to keep you warm and stylish.",
+    images: [
+      "assets/images/product1.jpg",
+      "assets/images/product2.jpg",
+      "assets/images/product3.jpg",
+      "assets/images/product4.jpg",
+      "assets/images/product5.jpg",
+      "assets/images/product6.jpg",
+      "assets/images/product7.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+  Product(
+    id: "5",
+    name: "Signature Bomber Jacket",
+    price: 190.0,
+    description:
+    "Our signature bomber jacket is a must-have piece that blends casual comfort with street-style edge. Available in multiple vibrant colors, it features embroidered details on the sleeves, a zip front, and durable fabric to keep you warm and stylish.",
+    images: [
+      "assets/images/product1.jpg",
+      "assets/images/product2.jpg",
+      "assets/images/product3.jpg",
+      "assets/images/product4.jpg",
+      "assets/images/product5.jpg",
+      "assets/images/product6.jpg",
+      "assets/images/product7.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+  Product(
+    id: "6",
+    name: "Signature Bomber Jacket",
+    price: 190.0,
+    description:
+    "Our signature bomber jacket is a must-have piece that blends casual comfort with street-style edge. Available in multiple vibrant colors, it features embroidered details on the sleeves, a zip front, and durable fabric to keep you warm and stylish.",
+    images: [
+      "assets/images/product1.jpg",
+      "assets/images/product2.jpg",
+      "assets/images/product3.jpg",
+      "assets/images/product4.jpg",
+      "assets/images/product5.jpg",
+      "assets/images/product6.jpg",
+      "assets/images/product7.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+  Product(
+    id: "7",
+    name: "Signature Bomber Jacket",
+    price: 190.0,
+    description:
+    "Our signature bomber jacket is a must-have piece that blends casual comfort with street-style edge. Available in multiple vibrant colors, it features embroidered details on the sleeves, a zip front, and durable fabric to keep you warm and stylish.",
+    images: [
+      "assets/images/product1.jpg",
+      "assets/images/product2.jpg",
+      "assets/images/product3.jpg",
+      "assets/images/product4.jpg",
+      "assets/images/product5.jpg",
+      "assets/images/product6.jpg",
+      "assets/images/product7.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+  Product(
+    id: "8",
+    name: "Signature Bomber Jacket",
+    price: 190.0,
+    description:
+    "Our signature bomber jacket is a must-have piece that blends casual comfort with street-style edge. Available in multiple vibrant colors, it features embroidered details on the sleeves, a zip front, and durable fabric to keep you warm and stylish.",
+    images: [
+      "assets/images/product1.jpg",
+      "assets/images/product2.jpg",
+      "assets/images/product3.jpg",
+      "assets/images/product4.jpg",
+      "assets/images/product5.jpg",
+      "assets/images/product6.jpg",
+      "assets/images/product7.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+  Product(
+    id: "9",
+    name: "Signature Bomber Jacket",
+    price: 190.0,
+    description:
+    "Our signature bomber jacket is a must-have piece that blends casual comfort with street-style edge. Available in multiple vibrant colors, it features embroidered details on the sleeves, a zip front, and durable fabric to keep you warm and stylish.",
+    images: [
+      "assets/images/product1.jpg",
+      "assets/images/product2.jpg",
+      "assets/images/product3.jpg",
+      "assets/images/product4.jpg",
+      "assets/images/product5.jpg",
+      "assets/images/product6.jpg",
+      "assets/images/product7.jpg",
+    ],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    colors: ["#000080", "#000000", "#C0C0C0"],
+  ),
+  Product(
+    id: "10",
     name: "Signature Bomber Jacket",
     price: 190.0,
     description:
