@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'models/product_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Product product;
@@ -37,12 +38,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.name),
+        title: Text(
+          product.name,
+          style: GoogleFonts.cairo(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
 
 
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 18,top: 14),
         decoration: BoxDecoration(
           color: theme.scaffoldBackgroundColor,
           boxShadow: [
@@ -60,7 +67,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark
                       ? Colors.white.withOpacity(0.15)
-                      : Colors.black87,
+                      : Color(0xFF0026CC),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -70,10 +77,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 onPressed: () {
 
                 },
-                icon: const Icon(Icons.remove_red_eye),
-                label: const Text(
+                icon: const Icon(Icons.remove_red_eye,size: 24,),
+                label:  Text(
                   "View",
-                  style: TextStyle(fontSize: 16),
+                  style: GoogleFonts.cairo(fontSize:18, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -82,8 +89,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark
-                      ? const Color(0xFF00E676)
-                      : const Color(0xFF00C853),
+                      ? const Color(0xFFFF9900)
+                      : const Color(0xFFFF9900),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -95,9 +102,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     SnackBar(content: Text('${product.name} added to cart')),
                   );
                 },
-                child: const Text(
+                child:  Text(
                   "Add to Cart",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -163,10 +170,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
             Text(
               "\$${product.price}",
-              style: TextStyle(
-                fontSize: 22,
+              style: GoogleFonts.cairo(
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.secondary,
+                color:isDark? Colors.amber.shade600 : Colors.amber.shade900,
               ),
             ),
 
@@ -176,14 +183,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             if (product.sizes.isNotEmpty) ...[
               Text(
                 "Size",
-                style: theme.textTheme.titleMedium,
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
               ),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 children: product.sizes.map((size) {
                   return ChoiceChip(
-                    label: Text(size),
+                    label: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      child: Text(
+                        size,
+                        style: GoogleFonts.cairo(fontSize: 16,fontWeight: FontWeight.bold),
+                      ),
+                    ),
                     selected: selectedSize == size,
                     onSelected: (_) {
                       setState(() {
@@ -214,8 +230,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         },
                         child: Container(
                           margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: 30,
-                          height: 30,
+                          width: 35,
+                          height: 35,
                           decoration: BoxDecoration(
                             color: color,
                             shape: BoxShape.circle,
@@ -236,7 +252,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   items: List.generate(10, (index) => index + 1)
                       .map((qty) => DropdownMenuItem(
                     value: qty,
-                    child: Text("$qty"),
+                    child: Text(
+                      "$qty",
+                      style: GoogleFonts.cairo(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ))
                       .toList(),
                   onChanged: (value) {
@@ -249,14 +271,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
 
             const SizedBox(height: 24),
-
-
+            Text(
+              "Description",
+              style: GoogleFonts.cairo(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+              ),
+            ),
+            const SizedBox(height: 8),
             Text(
               product.description,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: GoogleFonts.cairo(
                 color: isDark ? Colors.white70 : Colors.black87,
                 height: 1.4,
-                fontSize: 16,
+                fontSize: 20,
               ),
             ),
 

@@ -6,6 +6,8 @@ class Product {
   final List<String> images;
   final List<String> sizes;
   final List<String> colors;
+  final String? category;
+  bool isFavorite=false ;
 
   Product({
     required this.id,
@@ -15,5 +17,7 @@ class Product {
     this.images = const [],
     this.sizes = const [],
     this.colors = const [],
+    this.category,
+    this.isFavorite = false,
   });
 }
