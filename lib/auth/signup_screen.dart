@@ -1,3 +1,4 @@
+import 'package:ezbuy/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/custom_text_field.dart';
@@ -40,7 +41,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     if (_formKey.currentState!.validate()) {
-      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
       _showSnackBar("Account created successfully!", Colors.green);
     }
   }
@@ -118,7 +119,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
+  Widget _buildFullNameField() {
+    return CustomTextField(
+      controller: _fullNameController,
+      hint: "Full Name",
+      icon: Icons.person,
+      validator: Validators.validateName,
+    );
+  }
+    Widget _buildPhoneField() {
+    return CustomTextField(
+      controller: _phoneController,
+      hint: "Phone Number",
+      icon: Icons.phone,
+      keyboardType: TextInputType.phone,
+      validator: Validators.validatePhone,
+    );
+  }
   Widget _buildEmailField() {
     return CustomTextField(
       controller: _emailController,
@@ -154,24 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildFullNameField() {
-    return CustomTextField(
-      controller: _fullNameController,
-      hint: "Full Name",
-      icon: Icons.person,
-      validator: Validators.validateName,
-    );
-  }
 
-  Widget _buildPhoneField() {
-    return CustomTextField(
-      controller: _phoneController,
-      hint: "Phone Number",
-      icon: Icons.phone,
-      keyboardType: TextInputType.phone,
-      validator: Validators.validatePhone,
-    );
-  }
 
   Widget _buildTermsCheckbox() {
     return Row(
@@ -203,7 +203,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildLoginPrompt() {
     return Center(
       child: TextButton(
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen())),
         child: const Text(
           "Already have an account? Log In",
           style: TextStyle(color: Colors.white),

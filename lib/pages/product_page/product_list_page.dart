@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../main.dart';
-import 'product_detail_page.dart';
-import 'Data/products_data.dart';
-import 'models/product_model.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'favorite_page.dart';
 import 'home.dart';
 
 class ProductListPage extends StatefulWidget {
-  const ProductListPage({super.key});
+  const ProductListPage({super.key, required bool isLoggedIn});
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
@@ -18,7 +15,7 @@ class _ProductListPageState extends State<ProductListPage> {
   int _bottomNavIndex = 0;
 
   final List<Widget> _pages = [
-    const ProductGridView(),
+    const ProductGridView(isLoggedIn: true,),
     const FavoritePage(),
     const Center(child: Text("Profile Page")),
   ];
