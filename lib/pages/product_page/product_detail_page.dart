@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'models/product_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'mycart.dart';
+
 class ProductDetailPage extends StatefulWidget {
   final Product product;
+  final bool isLoggedIn ;
 
-  const ProductDetailPage({super.key, required this.product});
+  const ProductDetailPage({super.key, required this.product,this.isLoggedIn=false});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -97,11 +100,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${product.name} added to cart')),
-                  );
-                },
+               onPressed: () {
+         if (!widget.isLoggedIn) {
+         ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(
+          content: Text('Please login to add items to cart'),
+           backgroundColor: Colors.redAccent,
+           duration: Duration(seconds: 2),
+          ),
+          );
+        } else {
+         Navigator.push(context, MaterialPageRoute(builder: (context)=>CartPage()));
+        }
+      },
+
                 child:  Text(
                   "Add to Cart",
                   style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold),

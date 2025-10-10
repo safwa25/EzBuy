@@ -4,8 +4,10 @@ import '../pages/product_page/models/product_model.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
+  final bool showBuyButton;
+  final bool isLoggedIn;
 
-  const ProductCard({super.key, required this.product});
+  const ProductCard({super.key, required this.product, this.showBuyButton=true,    this.isLoggedIn = false,});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class ProductCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProductDetailPage(product: product),
+            builder: (context) => ProductDetailPage(product: product, isLoggedIn: isLoggedIn,),
           ),
         );
       },
@@ -118,7 +120,8 @@ class ProductCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Container(
+                            if (showBuyButton)
+                                  Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: Colors.orange.withOpacity(0.1),
@@ -130,6 +133,7 @@ class ProductCard extends StatelessWidget {
                               color: Colors.orange,
                             ),
                           ),
+                            
                         ],
                       ),
                     ],

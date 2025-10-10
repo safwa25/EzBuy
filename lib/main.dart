@@ -1,6 +1,8 @@
+  
+import 'package:ezbuy/auth/splash.dart';
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
-import 'pages/product_page/product_list_page.dart';
+
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
 
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: mode,
-          home: const ProductListPage(),
+          home: const SplashScreen(),
         );
       },
     );

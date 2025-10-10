@@ -15,7 +15,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL"],
     colors: ["#FFA500", "#808080", "#0000FF", "#FF0000", "#000000"],
-    isFavorite: true
+     category: 'Clothes',
   ),
   Product(
     id: "2",
@@ -29,6 +29,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+     category: 'Clothes',
   ),
   Product(
     id: "3",
@@ -44,7 +45,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
-    isFavorite: true
+     category: 'Clothes',
   ),
   Product(
     id: "4",
@@ -63,6 +64,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+     category: 'Clothes',
   ),
   Product(
     id: "5",
@@ -81,6 +83,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+     category: 'Clothes',
   ),
   Product(
     id: "6",
@@ -99,6 +102,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+     category: 'Clothes',
   ),
   Product(
     id: "7",
@@ -117,6 +121,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+     category: 'Clothes',
   ),
   Product(
     id: "8",
@@ -135,6 +140,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+     category: 'Clothes',
   ),
   Product(
     id: "9",
@@ -153,6 +159,7 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+     category: 'Clothes',
   ),
   Product(
     id: "10",
@@ -171,5 +178,6 @@ List<Product> products = [
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["#000080", "#000000", "#C0C0C0"],
+     category: 'Clothes',
   ),
 ];

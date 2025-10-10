@@ -1,3 +1,4 @@
+import 'package:ezbuy/pages/product_page/product_list_page.dart';
 import 'package:flutter/material.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/custom_text_field.dart';
@@ -28,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _showSnackBar('Login Successful!', Colors.green);
+             Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductListPage(isLoggedIn:true)));
     } else {
       _showSnackBar('Please fill in all fields correctly', Colors.red);
     }
