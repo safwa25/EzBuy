@@ -5,6 +5,8 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/gradient_button.dart';
 import '../utils/validators.dart';
 import 'signup_screen.dart';
+import 'auth_services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,8 +30,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      _showSnackBar('Login Successful!', Colors.green);
-             Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductListPage(isLoggedIn:true)));
+      authServiceNotifier.value.signInWithEmail(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      ).then((user) {
+        if (user != null) {
+          _showSnackBar('Login Successful!', Colors.green);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductListPage(isLoggedIn: true)));
+        } else {
+          _showSnackBar('Login Failed. Please try again.', Colors.red);
+        }
+      });
     } else {
       _showSnackBar('Please fill in all fields correctly', Colors.red);
     }

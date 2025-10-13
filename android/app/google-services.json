@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "697316165791",
+    "project_id": "e-commerce-depi-fab4f",
+    "storage_bucket": "e-commerce-depi-fab4f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:697316165791:android:2eceab76b810d42ec6baaa",
+        "android_client_info": {
+          "package_name": "com.example.ezbuy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8nHsO_Q9nYwMrOUq_U106CKCUGLl6idU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

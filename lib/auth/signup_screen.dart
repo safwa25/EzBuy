@@ -4,6 +4,8 @@ import '../widgets/auth_background.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/gradient_button.dart';
 import '../utils/validators.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_services.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -41,8 +43,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     if (_formKey.currentState!.validate()) {
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
-      _showSnackBar("Account created successfully!", Colors.green);
+      authServiceNotifier.value.registerWithEmail(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      ).then((user) {
+        if (user != null) {
+          _showSnackBar("Account created successfully!", Colors.green);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+        } else {
+          _showSnackBar("Sign up failed. Please try again.", Colors.red);
+        }
+      });
     }
   }
 
