@@ -12,7 +12,7 @@ class GradientButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    this.gradientColors = const [Color(0xFF6C4EF1), Color(0xFFAB47BC)],
+    this.gradientColors = const [Color(0xFF884ED9), Color(0xFF3FA9F5)],
     this.height = 50,
     this.borderRadius = 24,
     this.fontSize = 18,
@@ -31,10 +31,7 @@ class GradientButton extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: fontSize,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: fontSize),
         ),
       ),
     );

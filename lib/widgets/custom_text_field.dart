@@ -26,15 +26,15 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Color.fromARGB(255, 44, 43, 43)),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white70),
-        prefixIcon: Icon(icon, color: Colors.white70),
+        hintStyle: const TextStyle(color: Color.fromARGB(255, 44, 43, 43)),
+        prefixIcon: Icon(icon, color: Color.fromARGB(255, 44, 43, 43)),
         suffixIcon: _buildSuffixIcon(),
         filled: true,
         // ignore: deprecated_member_use
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: const Color.fromARGB(255, 168, 167, 167).withOpacity(0.1),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -50,7 +50,7 @@ class CustomTextField extends StatelessWidget {
     return IconButton(
       icon: Icon(
         obscureText ? Icons.visibility_off : Icons.visibility,
-        color: Colors.white70,
+        color: Colors.black,
       ),
       onPressed: onToggleVisibility,
     );

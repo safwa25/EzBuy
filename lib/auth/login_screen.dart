@@ -1,5 +1,6 @@
 import 'package:ezbuy/pages/product_page/product_list_page.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; 
 import '../widgets/auth_background.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/gradient_button.dart';
@@ -30,17 +31,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      authServiceNotifier.value.signInWithEmail(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      ).then((user) {
-        if (user != null) {
-          _showSnackBar('Login Successful!', Colors.green);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ProductListPage(isLoggedIn: true)));
-        } else {
-          _showSnackBar('Login Failed. Please try again.', Colors.red);
-        }
-      });
+      authServiceNotifier.value
+          .signInWithEmail(
+            _emailController.text.trim(),
+            _passwordController.text.trim(),
+          )
+          .then((user) {
+            if (user != null) {
+              _showSnackBar('Login Successful!', Colors.green);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductListPage(isLoggedIn: true),
+                ),
+              );
+            } else {
+              _showSnackBar('Login Failed. Please try again.', Colors.red);
+            }
+          });
     } else {
       _showSnackBar('Please fill in all fields correctly', Colors.red);
     }
@@ -49,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message, style: GoogleFonts.poppins(fontSize: 16)),
         backgroundColor: color,
       ),
     );
@@ -95,32 +103,38 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildAvatar() {
-    return const CircleAvatar(
-      radius: 40,
-      backgroundColor: Colors.white24,
-      child: Icon(
-        Icons.account_circle,
-        size: 40,
-        color: Colors.white,
+    return CircleAvatar(
+      radius: 50,
+      backgroundColor: Colors.grey[200],
+      child: ClipOval(
+        child: Image.asset(
+          'assets/images/EB_LOGO.png',
+          width: 110,
+          height: 110,
+        ),
       ),
     );
   }
 
   Widget _buildHeader() {
-    return const Column(
+    return Column(
       children: [
         Text(
           "Welcome Back",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.poppins(
+            color: Colors.black,
+            fontSize: 38,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Text(
           "Sign in to continue your journey",
-          style: TextStyle(color: Colors.white70, fontSize: 18),
+          style: GoogleFonts.poppins(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ],
     );
@@ -153,34 +167,41 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () {},
-        child: const Text(
+        child: Text(
           "Forgot Password?",
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.poppins(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            decoration: TextDecoration.underline,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildSignInButton() {
-    return GradientButton(
-      text: "Sign In",
-      onPressed: _submitForm,
-    );
+    return GradientButton(text: "Log In", onPressed: _submitForm);
   }
 
   Widget _buildSignUpPrompt() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
+        Text(
           "Don't have an account?",
-          style: TextStyle(color: Colors.white70),
+          style: GoogleFonts.poppins(color: Colors.black, fontSize: 16),
         ),
         TextButton(
           onPressed: _navigateToSignUp,
-          child: const Text(
+          child: Text(
             "Sign Up",
-            style: TextStyle(color: Colors.white),
+            style: GoogleFonts.poppins(
+              color: Colors.black,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              decoration: TextDecoration.underline,
+            ),
           ),
         ),
       ],

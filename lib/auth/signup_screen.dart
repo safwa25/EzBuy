@@ -21,7 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _confirmPasswordController = TextEditingController();
   final _fullNameController = TextEditingController();
   final _phoneController = TextEditingController();
-  
+
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _acceptTerms = false;
@@ -46,10 +46,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       authServiceNotifier.value.registerWithEmail(
         _emailController.text.trim(),
         _passwordController.text.trim(),
+        fullName: _fullNameController.text.trim(), // ✅ السطر ده جديد
+        phone: _phoneController.text.trim(),       // ✅ السطر ده جديد
       ).then((user) {
         if (user != null) {
           _showSnackBar("Account created successfully!", Colors.green);
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => const LoginScreen()));
         } else {
           _showSnackBar("Sign up failed. Please try again.", Colors.red);
         }
@@ -85,21 +88,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                const SizedBox(height: 40),
+                const SizedBox(height: 50),
                 _buildEmailField(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 _buildPasswordField(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 _buildConfirmPasswordField(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 _buildFullNameField(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 _buildPhoneField(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 _buildTermsCheckbox(),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 _buildSignUpButton(),
-                const SizedBox(height: 20),
+                const SizedBox(height: 35),
                 _buildLoginPrompt(),
               ],
             ),
@@ -116,20 +119,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text(
             "Create Account",
             style: TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontSize: 38,
+              fontWeight: FontWeight.w800,
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: 12),
           Text(
             "Sign up to get started",
-            style: TextStyle(color: Colors.white70, fontSize: 16),
+            style: TextStyle(color: Colors.black87, fontSize: 20),
           ),
         ],
       ),
     );
   }
+
   Widget _buildFullNameField() {
     return CustomTextField(
       controller: _fullNameController,
@@ -138,7 +142,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       validator: Validators.validateName,
     );
   }
-    Widget _buildPhoneField() {
+
+  Widget _buildPhoneField() {
     return CustomTextField(
       controller: _phoneController,
       hint: "Phone Number",
@@ -147,6 +152,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       validator: Validators.validatePhone,
     );
   }
+
   Widget _buildEmailField() {
     return CustomTextField(
       controller: _emailController,
@@ -182,8 +188,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-
-
   Widget _buildTermsCheckbox() {
     return Row(
       children: [
@@ -191,12 +195,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           value: _acceptTerms,
           onChanged: (value) => setState(() => _acceptTerms = value ?? false),
           checkColor: Colors.white,
-          activeColor: Colors.purple,
+          activeColor: Colors.deepPurple,
         ),
         const Expanded(
           child: Text(
             "I accept the Terms and Conditions",
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black87, fontSize: 18),
           ),
         ),
       ],
@@ -213,12 +217,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildLoginPrompt() {
     return Center(
-      child: TextButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen())),
-        child: const Text(
-          "Already have an account? Log In",
-          style: TextStyle(color: Colors.white),
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "Already have an account? ",
+            style: TextStyle(
+              color: Colors.black87,
+              fontSize: 18,
+            ),
+          ),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+            ),
+            child: const Text(
+              "Log In",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
+                decorationThickness: 2,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
