@@ -41,6 +41,7 @@ class ProductCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Expanded(
                 flex: 2,
@@ -94,19 +95,20 @@ class ProductCard extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
+
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         product.name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontSize: 16,
                           color: isDark ? Colors.white : Colors.black87,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 6),
+                      SizedBox(height: 4),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -116,24 +118,24 @@ class ProductCard extends StatelessWidget {
                               color: isDark
                                   ? Colors.blueAccent.withOpacity(0.8)
                                   : Color(0xFF0026CC),
-                              fontSize: 22,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                             if (showBuyButton)
                                   Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
                               color: Colors.orange.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
                               Icons.add_shopping_cart,
-                              size: 20,
+                              size: 18,
                               color: Colors.orange,
                             ),
                           ),
-                            
+
                         ],
                       ),
                     ],

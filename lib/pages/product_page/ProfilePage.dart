@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+
+
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -19,6 +26,39 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     fetchUserData();
   }
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> pickAndUploadImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image == null) return;
+
+
+      final bytes = await File(image.path).readAsBytes();
+
+      final base64String = base64Encode(bytes);
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .update({'photo': base64String});
+
+
+      setState(() {
+        userData!['photo'] = base64String;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Photo updated successfully!')),
+      );
+    } catch (e) {
+      print('Error picking/uploading image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to upload image')),
+      );
+    }
+  }
+
 
   Future<void> fetchUserData() async {
     if (user != null) {
@@ -51,6 +91,11 @@ class _ProfilePageState extends State<ProfilePage> {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
+    final createdAt = userData!['createdAt'] != null
+        ? DateFormat('MMMM dd, yyyy • hh:mm a')
+        .format((userData!['createdAt'] as Timestamp).toDate())
+        : 'Unknown';
+
 
     if (userData == null) {
       return const Center(child: Text('No user data found.'));
@@ -66,11 +111,52 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              radius: 45,
-              backgroundColor: Colors.teal,
-              child: Icon(Icons.person, size: 60, color: Colors.white),
+            Stack(
+              children: [
+
+                CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.teal.shade200,
+                  backgroundImage: userData!['photo'] != null
+                      ? MemoryImage(base64Decode(userData!['photo']))
+                      : null,
+                  child: userData!['photo'] == null
+                      ? const Icon(Icons.person, size: 60, color: Colors.white)
+                      : null,
+                ),
+
+
+                Positioned(
+                  bottom: 4,
+                  right: 4,
+                  child: GestureDetector(
+                    onTap: pickAndUploadImage,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        shape: BoxShape.circle,
+                        border: Border.all(width: 2, color: Colors.white),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 3,
+                            offset: const Offset(1, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                        size: 15,
+                      ),
+                    ),
+                  ),
+                ),
+
+              ],
             ),
+
             const SizedBox(height: 20),
             Text(
               userData!['fullName'] ?? '',
@@ -97,13 +183,11 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 const Icon(Icons.calendar_today, color: Colors.teal),
                 const SizedBox(width: 10),
-                Text(
-                  userData!['createdAt'] != null
-                      ? (userData!['createdAt'] as Timestamp)
-                      .toDate()
-                      .toString()
-                      : '',
-                  style: const TextStyle(fontSize: 16),
+                Flexible(
+                  child: Text(
+                    "Time of creation: $createdAt",
+                    style: const TextStyle(fontSize: 16),
+                  ),
                 ),
               ],
             ),
