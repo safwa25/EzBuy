@@ -6,9 +6,13 @@ import 'mycart.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Product product;
-  final bool isLoggedIn ;
+  final bool isLoggedIn;
 
-  const ProductDetailPage({super.key, required this.product,this.isLoggedIn=false});
+  const ProductDetailPage({
+    super.key,
+    required this.product,
+    this.isLoggedIn = false,
+  });
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -43,16 +47,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       appBar: AppBar(
         title: Text(
           product.name,
-          style: GoogleFonts.cairo(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: GoogleFonts.cairo(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
 
-
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 18,top: 14),
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 18,
+          top: 14,
+        ),
         decoration: BoxDecoration(
           color: theme.scaffoldBackgroundColor,
           boxShadow: [
@@ -77,13 +82,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                onPressed: () {
-
-                },
-                icon: const Icon(Icons.remove_red_eye,size: 24,),
-                label:  Text(
+                onPressed: () {},
+                icon: const Icon(Icons.remove_red_eye, size: 24),
+                label: Text(
                   "View",
-                  style: GoogleFonts.cairo(fontSize:18, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.cairo(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -100,23 +106,33 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-               onPressed: () {
-         if (!widget.isLoggedIn) {
-         ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(
-          content: Text('Please login to add items to cart'),
-           backgroundColor: Colors.redAccent,
-           duration: Duration(seconds: 2),
-          ),
-          );
-        } else {
-         Navigator.push(context, MaterialPageRoute(builder: (context)=>CartPage()));
-        }
-      },
+                onPressed: () {
+                  if (!widget.isLoggedIn) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please login to add items to cart'),
+                        backgroundColor: Colors.redAccent,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Item added to cart")),
+                    );
+                    CartPage.cardProducts.add(product);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CartPage()),
+                    );
+                  }
+                },
 
-                child:  Text(
+                child: Text(
                   "Add to Cart",
-                  style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.cairo(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -179,18 +195,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
             const SizedBox(height: 24),
 
-
             Text(
               "\$${product.price}",
               style: GoogleFonts.cairo(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color:isDark? Colors.amber.shade600 : Colors.amber.shade900,
+                color: isDark ? Colors.amber.shade600 : Colors.amber.shade900,
               ),
             ),
 
             const SizedBox(height: 20),
-
 
             if (product.sizes.isNotEmpty) ...[
               Text(
@@ -206,10 +220,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 children: product.sizes.map((size) {
                   return ChoiceChip(
                     label: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 4,
+                      ),
                       child: Text(
                         size,
-                        style: GoogleFonts.cairo(fontSize: 16,fontWeight: FontWeight.bold),
+                        style: GoogleFonts.cairo(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     selected: selectedSize == size,
@@ -224,7 +244,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               const SizedBox(height: 20),
             ],
 
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -232,8 +251,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   Row(
                     children: product.colors.map((colorHex) {
                       final color = Color(
-                          int.parse(colorHex.substring(1, 7), radix: 16) +
-                              0xFF000000);
+                        int.parse(colorHex.substring(1, 7), radix: 16) +
+                            0xFF000000,
+                      );
                       return GestureDetector(
                         onTap: () {
                           setState(() {
@@ -262,16 +282,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 DropdownButton<int>(
                   value: quantity,
                   items: List.generate(10, (index) => index + 1)
-                      .map((qty) => DropdownMenuItem(
-                    value: qty,
-                    child: Text(
-                      "$qty",
-                      style: GoogleFonts.cairo(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ))
+                      .map(
+                        (qty) => DropdownMenuItem(
+                          value: qty,
+                          child: Text(
+                            "$qty",
+                            style: GoogleFonts.cairo(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      )
                       .toList(),
                   onChanged: (value) {
                     setState(() {

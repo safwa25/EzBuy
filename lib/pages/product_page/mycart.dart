@@ -12,6 +12,7 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(title: const Text('My Cart')),
       body: CartPage.cardProducts.isEmpty
@@ -20,67 +21,113 @@ class _CartPageState extends State<CartPage> {
               itemCount: CartPage.cardProducts.length,
               itemBuilder: (context, index) {
                 final product = CartPage.cardProducts[index];
+                double quantity = 1;
+             
+
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Color(0xfff0f0f0),
+                      color: isDark
+                          ? const Color.fromARGB(255, 45, 45, 45)
+                          : const Color(0xfff0f0f0),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2), // shadow color
-                          blurRadius: 4, // how soft the shadow is
-                          spreadRadius: 1, // how much it spreads
-                          offset: const Offset(0, 4), // position: (x, y)
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 4,
+                          spreadRadius: 1,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        ProductCartImage(product: product),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(product.name),
-                            Text(product.description),
-                          ],
+                        //Product Image Section
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              image: DecorationImage(
+                                image: AssetImage(product.images[0]),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                        Text("${product.price}"),
+
+                        const SizedBox(width: 8),
+
+                        //Product Description Section
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                product.name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                product.description,
+                                style: const TextStyle(fontSize: 14),
+                                softWrap: true,
+
+                                overflow: TextOverflow.visible,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        //Price + Quantity + Remove Section
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "\$${(product.price * quantity).toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.06,
+                              ),
+
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    CartPage.cardProducts.removeAt(index);
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 );
               },
             ),
-    );
-  }
-}
-
-class ProductCartImage extends StatelessWidget {
-  const ProductCartImage({
-    super.key,
-    required this.product,
-  });
-
-  final Product product;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Color(0xffffffff),
-        borderRadius: BorderRadius.circular(16),
-        image: DecorationImage(
-          image: AssetImage("${product.images}"),
-          fit: BoxFit.cover,
-        ),
-      ),
-      width: 100,
-      height: 100,
     );
   }
 }

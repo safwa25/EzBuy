@@ -142,7 +142,11 @@ class ProductCard extends StatelessWidget {
                               child: Center(
                                 child: IconButton(
                                   onPressed: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Item added to cart"))
+                                    );
                                     CartPage.cardProducts.add(product);
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>CartPage()));
                                   },
                                   icon: Icon(
                                     Icons.add_shopping_cart,
