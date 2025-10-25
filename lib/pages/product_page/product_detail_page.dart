@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'models/product_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'mycart.dart';
+import '../cart/mycart.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Product product;

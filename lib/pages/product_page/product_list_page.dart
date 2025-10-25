@@ -1,4 +1,4 @@
-import 'package:ezbuy/pages/product_page/mycart.dart';
+import 'package:ezbuy/pages/cart/mycart.dart';
 import 'package:flutter/material.dart';
 import '../../main.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
