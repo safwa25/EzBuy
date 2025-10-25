@@ -71,19 +71,19 @@ class _SplashScreenState extends State<SplashScreen>
             children: [
               ScaleTransition(
                 scale: _iconAnimation,
-                child: const Icon(
-                  Icons.shopping_bag_rounded, 
-                  size: 140,
-                  color: Colors.white,
+                child: Image.asset(
+                  "assets/images/white_EB_logo.png",
+                  width: MediaQuery.of(context).size.height * 0.15,
+                  )
                 ),
-              ),
+              
               const SizedBox(height: 25),
               FadeTransition(
                 opacity: _textFadeAnimation,
                 child: const Text(
-                  'E-Commerce',
+                  'EZBUY',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 56,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.3,
                     color: Colors.white,

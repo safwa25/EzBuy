@@ -1,3 +1,4 @@
+import 'package:ezbuy/pages/cart/mycart.dart';
 import 'package:flutter/material.dart';
 import '../../main.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
@@ -17,14 +18,16 @@ class _ProductListPageState extends State<ProductListPage> {
   int _bottomNavIndex = 0;
 
   final List<Widget> _pages = [
-    const ProductGridView(isLoggedIn: true,),
+    const ProductGridView(isLoggedIn: true),
     const FavoritePage(),
     const ProfilePage(),
   ];
 
   void _toggleTheme() {
     final currentMode = themeNotifier.value;
-    themeNotifier.value = currentMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    themeNotifier.value = currentMode == ThemeMode.dark
+        ? ThemeMode.light
+        : ThemeMode.dark;
   }
 
   @override
@@ -40,14 +43,8 @@ class _ProductListPageState extends State<ProductListPage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [
-                const Color(0xFF1E1E1E),
-                const Color(0xFF2D2D2D),
-              ]
-                  : [
-                Colors.white,
-                Colors.grey.shade50,
-              ],
+                  ? [const Color(0xFF1E1E1E), const Color(0xFF2D2D2D)]
+                  : [Colors.white, Colors.grey.shade50],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -74,32 +71,50 @@ class _ProductListPageState extends State<ProductListPage> {
               return Container(
                 margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
-                  color: isDark // Use isDarkMode here
+                  color:
+                      isDark // Use isDarkMode here
                       ? Colors.white.withOpacity(0.1)
                       : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: IconButton(
-                  icon: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) {
-                      return RotationTransition(
-                        turns: animation,
-                        child: FadeTransition(opacity: animation, child: child),
-                      );
-                    },
-                    child: Icon(
-                      isDark
-                          ? Icons.light_mode_rounded
-                          : Icons.dark_mode_rounded,
-                      key: ValueKey(isDark),
-                      color: mode == ThemeMode.dark
-                          ? Colors.amber.shade300
-                          : Colors.deepOrange.shade600,
-                      size: 26,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => CartPage()),
+                        );
+                      },
+                      icon: Icon(Icons.add_shopping_cart_rounded),
                     ),
-                  ),
-                  onPressed: _toggleTheme,
+                    SizedBox(width: 8),
+                    IconButton(
+                      icon: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (child, animation) {
+                          return RotationTransition(
+                            turns: animation,
+                            child: FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: Icon(
+                          isDark
+                              ? Icons.light_mode_rounded
+                              : Icons.dark_mode_rounded,
+                          key: ValueKey(isDark),
+                          color: mode == ThemeMode.dark
+                              ? Colors.amber.shade300
+                              : Colors.deepOrange.shade600,
+                          size: 26,
+                        ),
+                      ),
+                      onPressed: _toggleTheme,
+                    ),
+                  ],
                 ),
               );
             },
@@ -128,10 +143,7 @@ class _ProductListPageState extends State<ProductListPage> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
-            colors: [
-              Colors.orange.shade400,
-              Colors.deepOrange.shade600,
-            ],
+            colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -148,11 +160,7 @@ class _ProductListPageState extends State<ProductListPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           shape: const CircleBorder(),
-          child: const Icon(
-            Icons.home_rounded,
-            size: 36,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.home_rounded, size: 36, color: Colors.white),
           onPressed: () {
             setState(() {
               _bottomNavIndex = 0;
@@ -175,16 +183,15 @@ class _ProductListPageState extends State<ProductListPage> {
         ),
         child: AnimatedBottomNavigationBar(
           iconSize: 36,
-          activeColor: isDark ? Colors.orange.shade400 : Colors.deepOrange.shade600,
+          activeColor: isDark
+              ? Colors.orange.shade400
+              : Colors.deepOrange.shade600,
           inactiveColor: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
           backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
           leftCornerRadius: 32,
           rightCornerRadius: 32,
           elevation: 0,
-          icons: const [
-            Icons.favorite_rounded,
-            Icons.person_rounded,
-          ],
+          icons: const [Icons.favorite_rounded, Icons.person_rounded],
           activeIndex: _bottomNavIndex == 0 ? -1 : _bottomNavIndex - 1,
           gapLocation: GapLocation.center,
           notchSmoothness: NotchSmoothness.verySmoothEdge,

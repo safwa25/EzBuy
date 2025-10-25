@@ -1,3 +1,4 @@
+import 'package:ezbuy/pages/cart/mycart.dart';
 import 'package:flutter/material.dart';
 import '../pages/product_page/product_detail_page.dart';
 import '../pages/product_page/models/product_model.dart';
@@ -7,7 +8,12 @@ class ProductCard extends StatelessWidget {
   final bool showBuyButton;
   final bool isLoggedIn;
 
-  const ProductCard({super.key, required this.product, this.showBuyButton=true,    this.isLoggedIn = false,});
+  const ProductCard({
+    super.key,
+    required this.product,
+    this.showBuyButton = true,
+    this.isLoggedIn = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +24,8 @@ class ProductCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProductDetailPage(product: product, isLoggedIn: isLoggedIn,),
+            builder: (context) =>
+                ProductDetailPage(product: product, isLoggedIn: isLoggedIn),
           ),
         );
       },
@@ -93,7 +100,10 @@ class ProductCard extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: Column(
 
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,20 +132,32 @@ class ProductCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                            if (showBuyButton)
-                                  Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: Colors.orange.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
+                          if (showBuyButton)
+                            Container(
+                              width: 32,
+                              height: 32,
+                              
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: IconButton(
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text("Item added to cart"))
+                                    );
+                                    CartPage.cardProducts.add(product);
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>CartPage()));
+                                  },
+                                  icon: Icon(
+                                    Icons.add_shopping_cart,
+                                    size: 20,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.add_shopping_cart,
-                              size: 18,
-                              color: Colors.orange,
-                            ),
-                          ),
-
                         ],
                       ),
                     ],
