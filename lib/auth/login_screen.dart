@@ -8,6 +8,7 @@ import '../utils/validators.dart';
 import 'signup_screen.dart';
 import 'auth_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../widgets/google_signin_button.dart'; 
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -54,6 +55,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+
+  void _signInWithGoogle() async {
+    final user = await authServiceNotifier.value.signInWithGoogle();
+    
+    if (user != null) {
+      _showSnackBar('Login Successful with Google!', Colors.green);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductListPage(isLoggedIn: true),
+        ),
+      );
+    } else {
+      _showSnackBar('Google Sign-In cancelled or failed', Colors.red);
+    }
+  }
+ 
+
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -92,6 +111,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 _buildForgotPassword(),
                 const SizedBox(height: 20),
                 _buildSignInButton(),
+                
+               
+                GoogleSignInButton(
+                  onPressed: _signInWithGoogle,
+                  buttonText: 'Continue with Google',
+                  showDivider: true,
+                ),
+                
+                
                 const SizedBox(height: 30),
                 _buildSignUpPrompt(),
               ],

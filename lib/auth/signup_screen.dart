@@ -1,11 +1,13 @@
 import 'package:ezbuy/auth/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; 
 import '../widgets/auth_background.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/gradient_button.dart';
 import '../utils/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_services.dart';
+import '../widgets/google_signin_button.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -43,27 +45,61 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     if (_formKey.currentState!.validate()) {
-      authServiceNotifier.value.registerWithEmail(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-        fullName: _fullNameController.text.trim(), // ✅ السطر ده جديد
-        phone: _phoneController.text.trim(),       // ✅ السطر ده جديد
-      ).then((user) {
-        if (user != null) {
-          _showSnackBar("Account created successfully!", Colors.green);
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => const LoginScreen()));
-        } else {
-          _showSnackBar("Sign up failed. Please try again.", Colors.red);
-        }
-      });
+      authServiceNotifier.value
+          .registerWithEmail(
+            _emailController.text.trim(),
+            _passwordController.text.trim(),
+            fullName: _fullNameController.text.trim(),
+            phone: _phoneController.text.trim(),
+          )
+          .then((user) {
+            if (user != null) {
+              _showSnackBar("Account created successfully!", Colors.green);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            } else {
+              _showSnackBar("Sign up failed. Please try again.", Colors.red);
+            }
+          });
     }
   }
+
+
+  void _signUpWithGoogle() async {
+    try {
+      final user = await authServiceNotifier.value.signInWithGoogle();
+
+      if (user != null) {
+        if (mounted) {
+          _showSnackBar('Account created successfully with Google!', Colors.green);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
+      } else {
+        if (mounted) {
+          _showSnackBar('Google Sign-Up cancelled or failed', Colors.red);
+        }
+      }
+    } catch (e) {
+      print('Error in _signUpWithGoogle: $e');
+      if (mounted) {
+        _showSnackBar('An error occurred. Please try again.', Colors.red);
+      }
+    }
+  }
+  
 
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style: GoogleFonts.poppins(fontSize: 16),
+        ),
         backgroundColor: color,
       ),
     );
@@ -102,6 +138,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 _buildTermsCheckbox(),
                 const SizedBox(height: 30),
                 _buildSignUpButton(),
+
+                GoogleSignInButton(
+                  onPressed: _signUpWithGoogle,
+                  buttonText: 'Sign Up with Google',
+                  showDivider: true,
+                ),
+                
+
                 const SizedBox(height: 35),
                 _buildLoginPrompt(),
               ],
@@ -113,21 +157,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _buildHeader() {
-    return const Center(
+    return Center(
       child: Column(
         children: [
           Text(
             "Create Account",
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.black,
               fontSize: 38,
               fontWeight: FontWeight.w800,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             "Sign up to get started",
-            style: TextStyle(color: Colors.black87, fontSize: 20),
+            style: GoogleFonts.poppins(
+              color: Colors.black87,
+              fontSize: 20,
+            ),
           ),
         ],
       ),
@@ -197,10 +244,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
           checkColor: Colors.white,
           activeColor: Colors.deepPurple,
         ),
-        const Expanded(
+        Expanded(
           child: Text(
             "I accept the Terms and Conditions",
-            style: TextStyle(color: Colors.black87, fontSize: 18),
+            style: GoogleFonts.poppins(
+              color: Colors.black87,
+              fontSize: 18,
+            ),
           ),
         ),
       ],
@@ -220,9 +270,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
+          Text(
             "Already have an account? ",
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.black87,
               fontSize: 18,
             ),
@@ -232,9 +282,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               context,
               MaterialPageRoute(builder: (context) => const LoginScreen()),
             ),
-            child: const Text(
+            child: Text(
               "Log In",
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 color: Colors.black,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

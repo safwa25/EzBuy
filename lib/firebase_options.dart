@@ -26,15 +26,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -63,7 +57,7 @@ class DefaultFirebaseOptions {
     projectId: 'e-commerce-depi-fab4f',
     storageBucket: 'e-commerce-depi-fab4f.firebasestorage.app',
   );
-  
+
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDJKogxKfVZuPllEtssfJm5qPm5IP3j5GM',
     appId: '1:697316165791:ios:281341e8a03b4926c6baaa',
@@ -72,4 +66,25 @@ class DefaultFirebaseOptions {
     storageBucket: 'e-commerce-depi-fab4f.firebasestorage.app',
     iosBundleId: 'com.example.ezbuy',
   );
+
+  
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDJKogxKfVZuPllEtssfJm5qPm5IP3j5GM',
+    appId: '1:697316165791:ios:281341e8a03b4926c6baaa',
+    messagingSenderId: '697316165791',
+    projectId: 'e-commerce-depi-fab4f',
+    storageBucket: 'e-commerce-depi-fab4f.firebasestorage.app',
+    iosBundleId: 'com.example.ezbuy',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyBjm5w5Her7Yf8uZEnmf2EpOQYi3zCUt8g',
+    appId: '1:697316165791:web:04ea5c6ec488de84c6baaa',
+    messagingSenderId: '697316165791',
+    projectId: 'e-commerce-depi-fab4f',
+    authDomain: 'e-commerce-depi-fab4f.firebaseapp.com',
+    storageBucket: 'e-commerce-depi-fab4f.firebasestorage.app',
+  );
+
 }
