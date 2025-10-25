@@ -4,6 +4,8 @@ import '../../main.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'favorite_page.dart';
 import 'home.dart';
+import 'ProfilePage.dart';
+
 
 class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key, required bool isLoggedIn});
@@ -18,7 +20,7 @@ class _ProductListPageState extends State<ProductListPage> {
   final List<Widget> _pages = [
     const ProductGridView(isLoggedIn: true),
     const FavoritePage(),
-    const Center(child: Text("Profile Page")),
+    const ProfilePage(),
   ];
 
   void _toggleTheme() {

@@ -48,6 +48,7 @@ class ProductCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Expanded(
                 flex: 2,
@@ -104,19 +105,20 @@ class ProductCard extends StatelessWidget {
                     vertical: 8,
                   ),
                   child: Column(
+
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         product.name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontSize: 16,
                           color: isDark ? Colors.white : Colors.black87,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 6),
+                      SizedBox(height: 4),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -126,7 +128,7 @@ class ProductCard extends StatelessWidget {
                               color: isDark
                                   ? Colors.blueAccent.withOpacity(0.8)
                                   : Color(0xFF0026CC),
-                              fontSize: 22,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
