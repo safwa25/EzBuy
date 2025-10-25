@@ -22,7 +22,6 @@ class _CartPageState extends State<CartPage> {
               itemBuilder: (context, index) {
                 final product = CartPage.cardProducts[index];
                 double quantity = 1;
-             
 
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -128,6 +127,52 @@ class _CartPageState extends State<CartPage> {
                 );
               },
             ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 4,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Total Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Total",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "\$${CartPage.cardProducts.fold(0, (sum, item) => sum + item.price.toInt()).toStringAsFixed(2)}",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Checkout Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Add your checkout action here
+                },
+                child: const Text("Proceed to Checkout",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
