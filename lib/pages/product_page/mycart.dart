@@ -130,7 +130,9 @@ class _CartPageState extends State<CartPage> {
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark
+              ? const Color.fromARGB(255, 45, 45, 45)
+              : const Color(0xfff0f0f0),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.2),
@@ -167,7 +169,10 @@ class _CartPageState extends State<CartPage> {
                 onPressed: () {
                   // Add your checkout action here
                 },
-                child: const Text("Proceed to Checkout",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                child: const Text(
+                  "Proceed to Checkout",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],
