@@ -1,11 +1,11 @@
 import 'package:ezbuy/auth/login_screen.dart';
+import 'package:ezbuy/core/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart'; 
 import '../widgets/auth_background.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/gradient_button.dart';
 import '../utils/validators.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'auth_services.dart';
 import '../widgets/google_signin_button.dart';
 
@@ -114,6 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: AuthBackground(
         child: SingleChildScrollView(
@@ -123,31 +124,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
+                _buildHeader(isDark),
                 const SizedBox(height: 50),
-                _buildEmailField(),
+                _buildEmailField(isDark),
                 const SizedBox(height: 20),
-                _buildPasswordField(),
+                _buildPasswordField(isDark),
                 const SizedBox(height: 20),
-                _buildConfirmPasswordField(),
+                _buildConfirmPasswordField(isDark),
                 const SizedBox(height: 20),
-                _buildFullNameField(),
+                _buildFullNameField(isDark),
                 const SizedBox(height: 20),
-                _buildPhoneField(),
+                _buildPhoneField(isDark),
                 const SizedBox(height: 20),
-                _buildTermsCheckbox(),
+                _buildTermsCheckbox(isDark),
                 const SizedBox(height: 30),
-                _buildSignUpButton(),
+                _buildSignUpButton(isDark),
 
                 GoogleSignInButton(
                   onPressed: _signUpWithGoogle,
                   buttonText: 'Sign Up with Google',
                   showDivider: true,
+                  isDark: isDark,
                 ),
                 
 
                 const SizedBox(height: 35),
-                _buildLoginPrompt(),
+                _buildLoginPrompt(isDark),
               ],
             ),
           ),
@@ -156,14 +158,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Center(
       child: Column(
         children: [
           Text(
             "Create Account",
             style: GoogleFonts.poppins(
-              color: Colors.black,
+             color: isDark ? Colors.white : Colors.black,
               fontSize: 38,
               fontWeight: FontWeight.w800,
             ),
@@ -172,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text(
             "Sign up to get started",
             style: GoogleFonts.poppins(
-              color: Colors.black87,
+             color: isDark ? Colors.white70 : Colors.black87,
               fontSize: 20,
             ),
           ),
@@ -181,35 +183,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildFullNameField() {
+  Widget _buildFullNameField(bool isDark) {
     return CustomTextField(
       controller: _fullNameController,
       hint: "Full Name",
       icon: Icons.person,
       validator: Validators.validateName,
+      isDark: isDark,
     );
   }
 
-  Widget _buildPhoneField() {
+  Widget _buildPhoneField(bool isDark) {
     return CustomTextField(
       controller: _phoneController,
       hint: "Phone Number",
       icon: Icons.phone,
       keyboardType: TextInputType.phone,
       validator: Validators.validatePhone,
+      isDark: isDark,
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(bool isDark) {
     return CustomTextField(
       controller: _emailController,
       hint: "Email Address",
       icon: Icons.email,
       validator: Validators.validateEmail,
+      isDark: isDark,
     );
   }
 
-  Widget _buildPasswordField() {
+  Widget _buildPasswordField(bool isDark) {
     return CustomTextField(
       controller: _passwordController,
       hint: "Password",
@@ -219,10 +224,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
         setState(() => _obscurePassword = !_obscurePassword);
       },
       validator: Validators.validatePassword,
+      isDark: isDark,
     );
   }
 
-  Widget _buildConfirmPasswordField() {
+  Widget _buildConfirmPasswordField(bool isDark) {
     return CustomTextField(
       controller: _confirmPasswordController,
       hint: "Confirm Password",
@@ -232,23 +238,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
         setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
       },
       validator: _validateConfirmPassword,
+      isDark: isDark,
     );
   }
 
-  Widget _buildTermsCheckbox() {
+  Widget _buildTermsCheckbox(bool isDark) {
     return Row(
       children: [
         Checkbox(
           value: _acceptTerms,
           onChanged: (value) => setState(() => _acceptTerms = value ?? false),
           checkColor: Colors.white,
-          activeColor: Colors.deepPurple,
+         activeColor: AppColors.lightPrimary,
         ),
         Expanded(
           child: Text(
             "I accept the Terms and Conditions",
             style: GoogleFonts.poppins(
-              color: Colors.black87,
+             color: isDark ? Colors.white70 : Colors.black87,
               fontSize: 18,
             ),
           ),
@@ -257,15 +264,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildSignUpButton() {
+ Widget _buildSignUpButton(bool isDark) {
     return GradientButton(
       text: "Sign Up",
       onPressed: _submitSignUp,
-      gradientColors: const [Color(0xFF884ED9), Color(0xFF3FA9F5)],
+      gradientColors: isDark 
+          ? [AppColors.darkPrimary, AppColors.darkSecondary] 
+          : [AppColors.lightPrimary, AppColors.lightSecondary],
     );
   }
-
-  Widget _buildLoginPrompt() {
+  Widget _buildLoginPrompt(bool isDark) {
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -273,7 +281,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Text(
             "Already have an account? ",
             style: GoogleFonts.poppins(
-              color: Colors.black87,
+            color: isDark ? Colors.white70 : Colors.black87,
               fontSize: 18,
             ),
           ),
@@ -285,7 +293,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Text(
               "Log In",
               style: GoogleFonts.poppins(
-                color: Colors.black,
+                color: isDark ? Colors.white : Colors.black,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.underline,

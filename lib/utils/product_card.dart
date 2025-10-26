@@ -1,22 +1,54 @@
 import 'package:ezbuy/pages/cart/mycart.dart';
+import 'package:ezbuy/pages/product_page/favorite_page.dart';
+import 'package:ezbuy/pages/product_page/models/product_model.dart';
+import 'package:ezbuy/pages/product_page/product_detail_page.dart';
 import 'package:flutter/material.dart';
-import '../pages/product_page/product_detail_page.dart';
-import '../pages/product_page/models/product_model.dart';
 
-class ProductCard extends StatelessWidget {
+
+class ProductCard extends StatefulWidget {
   final Product product;
   final bool showBuyButton;
   final bool isLoggedIn;
+  final VoidCallback? onFavoriteTap;
 
   const ProductCard({
     super.key,
     required this.product,
-    this.showBuyButton = true,
+    this.showBuyButton = false,
     this.isLoggedIn = false,
+    this.onFavoriteTap,
   });
 
   @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  late bool isFav;
+
+  @override
+  void initState() {
+    super.initState();
+    isFav = FavoritePage.favoriteProducts.contains(widget.product);
+  }
+
+  void toggleFavorite() {
+    setState(() {
+      if (isFav) {
+        FavoritePage.favoriteProducts.remove(widget.product);
+        isFav = false;
+       
+      } else {
+        FavoritePage.favoriteProducts.add(widget.product);
+        isFav = true;
+       
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final product = widget.product;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
@@ -24,148 +56,125 @@ class ProductCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                ProductDetailPage(product: product, isLoggedIn: isLoggedIn),
+            builder: (context) => ProductDetailPage(product: product),
           ),
         );
       },
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: isDark
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.2),
-              blurRadius: 10,
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
-                        bottom: Radius.circular(20),
-                      ),
-                      child: Image.asset(
-                        product.images[0],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                            ),
-                          ],
-                        ),
-                        child: product.isFavorite
-                            ? const Icon(
-                                Icons.favorite,
-                                size: 24,
-                                color: Colors.red,
-                              )
-                            : const Icon(
-                                Icons.favorite_border,
-                                size: 24,
-                                color: Colors.grey,
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    product.images[0],
+                    height: 130,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
                   ),
-                  child: Column(
+                ),
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (!widget.isLoggedIn) {
+                        widget.onFavoriteTap?.call(); 
+                      } else {
+                        toggleFavorite(); 
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        size: 24,
+                        color: isFav ? Colors.red : Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
 
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 8),
+
+            
+            Text(
+              product.name,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+
+            const SizedBox(height: 6),
+
+        
+            Text(
+              '\$${product.price}',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.orange[700],
+              ),
+            ),
+
+            const Spacer(),
+
+       
+            if (widget.showBuyButton)
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {
+                    CartPage.cardProducts.add(product);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Added to cart 🛒'),
+                        backgroundColor: Colors.orange,
+                        duration: Duration(seconds: 1),
                       ),
-                      SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "\$${product.price}",
-                            style: TextStyle(
-                              color: isDark
-                                  ? Colors.blueAccent.withOpacity(0.8)
-                                  : Color(0xFF0026CC),
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          if (showBuyButton)
-                            Container(
-                              width: 32,
-                              height: 32,
-                              
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: IconButton(
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text("Item added to cart"))
-                                    );
-                                    CartPage.cardProducts.add(product);
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>CartPage()));
-                                  },
-                                  icon: Icon(
-                                    Icons.add_shopping_cart,
-                                    size: 20,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ],
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.add_shopping_cart,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );

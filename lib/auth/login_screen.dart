@@ -1,3 +1,6 @@
+
+import 'package:ezbuy/auth/forget_password.dart';
+import 'package:ezbuy/core/theme/colors.dart';
 import 'package:ezbuy/pages/product_page/product_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart'; 
@@ -7,7 +10,6 @@ import '../widgets/gradient_button.dart';
 import '../utils/validators.dart';
 import 'signup_screen.dart';
 import 'auth_services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/google_signin_button.dart'; 
 
 class LoginScreen extends StatefulWidget {
@@ -91,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: AuthBackground(
         child: SingleChildScrollView(
@@ -100,28 +103,29 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 40),
-                _buildAvatar(),
+                _buildAvatar(isDark),
                 const SizedBox(height: 30),
-                _buildHeader(),
+                _buildHeader(isDark),
                 const SizedBox(height: 40),
-                _buildEmailField(),
+                _buildEmailField(isDark),
                 const SizedBox(height: 20),
-                _buildPasswordField(),
+                _buildPasswordField(isDark),
                 const SizedBox(height: 10),
-                _buildForgotPassword(),
+                _buildForgotPassword(isDark),
                 const SizedBox(height: 20),
-                _buildSignInButton(),
+                _buildSignInButton(isDark),
                 
                
                 GoogleSignInButton(
                   onPressed: _signInWithGoogle,
                   buttonText: 'Continue with Google',
                   showDivider: true,
+                  isDark: isDark,
                 ),
                 
                 
                 const SizedBox(height: 30),
-                _buildSignUpPrompt(),
+                _buildSignUpPrompt(isDark),
               ],
             ),
           ),
@@ -130,13 +134,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(bool isDark) {
     return CircleAvatar(
       radius: 50,
-      backgroundColor: Colors.grey[200],
+     backgroundColor: isDark ? AppColors.darkSecondary.withOpacity(0.2) : Colors.grey[200],
       child: ClipOval(
         child: Image.asset(
-          'assets/images/EB_LOGO.png',
+          'assets/images/orange_EB_logo.png',
           width: 110,
           height: 110,
         ),
@@ -144,13 +148,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDark) {
     return Column(
       children: [
         Text(
           "Welcome Back",
           style: GoogleFonts.poppins(
-            color: Colors.black,
+          color: isDark ? Colors.white : Colors.black,
             fontSize: 38,
             fontWeight: FontWeight.w700,
           ),
@@ -159,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Text(
           "Sign in to continue your journey",
           style: GoogleFonts.poppins(
-            color: Colors.black,
+           color: isDark ? Colors.white70 : Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.w400,
           ),
@@ -168,37 +172,45 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildEmailField() {
+  Widget _buildEmailField(bool isDark) {
     return CustomTextField(
       controller: _emailController,
       hint: "Email Address",
       icon: Icons.email,
       validator: Validators.validateEmail,
+      isDark: isDark,
     );
   }
 
-  Widget _buildPasswordField() {
+  Widget _buildPasswordField(bool isDark) {
     return CustomTextField(
       controller: _passwordController,
-      hint: "Password",
+      hint: "Password",      
       icon: Icons.lock,
       obscureText: _obscurePassword,
+
       onToggleVisibility: () {
         setState(() => _obscurePassword = !_obscurePassword);
       },
       validator: Validators.validatePassword,
+      isDark: isDark,
     );
   }
 
-  Widget _buildForgotPassword() {
+  Widget _buildForgotPassword(bool isDark) {
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+      );
+        },
         child: Text(
           "Forgot Password?",
           style: GoogleFonts.poppins(
-            color: Colors.black,
+           color: isDark ? Colors.white : Colors.black,
             fontSize: 16,
             fontWeight: FontWeight.w500,
             decoration: TextDecoration.underline,
@@ -208,24 +220,29 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignInButton() {
-    return GradientButton(text: "Log In", onPressed: _submitForm);
+  Widget _buildSignInButton(bool isDark) {
+    return GradientButton(text: "Log In",
+   onPressed: _submitForm,
+      gradientColors: isDark 
+          ? [AppColors.darkPrimary, AppColors.darkSecondary] 
+          : [AppColors.lightPrimary, AppColors.lightSecondary],
+    );
   }
 
-  Widget _buildSignUpPrompt() {
+  Widget _buildSignUpPrompt(bool isDark) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           "Don't have an account?",
-          style: GoogleFonts.poppins(color: Colors.black, fontSize: 16),
+          style: GoogleFonts.poppins(color: isDark ? Colors.white70 : Colors.black, fontSize: 16),
         ),
         TextButton(
           onPressed: _navigateToSignUp,
           child: Text(
             "Sign Up",
             style: GoogleFonts.poppins(
-              color: Colors.black,
+             color: isDark ? Colors.white : Colors.black,
               fontSize: 17,
               fontWeight: FontWeight.bold,
               decoration: TextDecoration.underline,
