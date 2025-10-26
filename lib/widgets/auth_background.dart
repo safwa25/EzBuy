@@ -1,4 +1,6 @@
+import 'package:ezbuy/core/theme/colors.dart';
 import 'package:flutter/material.dart';
+
 
 class AuthBackground extends StatelessWidget {
   final Widget child;
@@ -7,92 +9,58 @@ class AuthBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Stack(
-      children: [_buildGradientBackground(), _buildBackgroundCircles(), child],
+      children: [
+        _buildGradientBackground(isDark),
+        _buildBackgroundCircles(isDark),
+        child,
+      ],
     );
   }
 
-  Widget _buildGradientBackground() {
-    return Container(decoration: const BoxDecoration(color: Color(0xFFF8F9FB)));
+  Widget _buildGradientBackground(bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkBackground : AppColors.lightBackground, // سوداء/بيضاء
+      ),
+    );
   }
 
-  Widget _buildBackgroundCircles() {
+  Widget _buildBackgroundCircles(bool isDark) {
+    final orangeOpacity = isDark ? 0x66 : 0x4D; // opacity أعلى في dark
+    final gradient = LinearGradient(
+      colors: [
+        Color(orangeOpacity | 0xFFFF7043), // برتقالي شفاف
+        Color(orangeOpacity | 0xFFFFA500), // برتقالي أفتح
+      ],
+    );
     return Stack(
       children: [
         Positioned(
           top: -100,
           right: -80,
-          child: _buildCircle(
-            250,
-            const LinearGradient(
-              colors: [
-                Color(0x4D0033FF), // أزرق #0033FF شفاف
-                Color(0x4D666666), // رمادي #666666 شفاف
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+          child: _buildCircle(250, gradient),
         ),
         Positioned(
           top: 80,
           right: 30,
-          child: _buildCircle(
-            100,
-            const LinearGradient(
-              colors: [
-                Color(0x4D0033FF), // أزرق #0033FF شفاف
-                Color(0x4D666666), // رمادي #666666 شفاف// رمادي #666666 شفاف
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
+          child: _buildCircle(100, gradient),
         ),
         Positioned(
           top: 120,
           left: -50,
-          child: _buildCircle(
-            160,
-            const LinearGradient(
-              colors: [
-                Color(0x4D0033FF), // أزرق #0033FF شفاف
-                Color(0x4D666666), // رمادي #666666 شفاف// رمادي #666666 شفاف
-              ],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            ),
-          ),
+          child: _buildCircle(160, gradient),
         ),
         Positioned(
           bottom: -60,
           left: -60,
-          child: _buildCircle(
-            200,
-            const LinearGradient(
-              colors: [
-                Color(0x4D0033FF), // أزرق #0033FF شفاف
-                Color(0x4D666666), // رمادي #666666 شفافف
-              ],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-            ),
-          ),
+          child: _buildCircle(200, gradient),
         ),
         Positioned(
           bottom: 100,
           right: -40,
-          child: _buildCircle(
-            140,
-            const LinearGradient(
-              colors: [
-                Color(0x4D0033FF), // أزرق #0033FF شفاف
-                Color(0x4D666666), // رمادي #666666 شفاف
-              ],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
+          child: _buildCircle(140, gradient),
         ),
       ],
     );
