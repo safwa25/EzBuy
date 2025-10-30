@@ -3,6 +3,7 @@ import '../models/product_model.dart';
 
 List<Product> products = [
   Product(
+    quantity: 1,
     id: "1",
     name: "Men Pants",
     price: 100.0,
@@ -18,6 +19,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 1,
     id: "2",
     name: "Samurai Graphic Hoodie",
     price: 120.0,
@@ -32,6 +34,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 1,
     id: "3",
     name: "Retro Varsity Jacket",
     price: 150.0,
@@ -48,6 +51,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 1,
     id: "4",
     name: "Signature Bomber Jacket",
     price: 190.0,
@@ -67,6 +71,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 1,
     id: "5",
     name: "Signature Bomber Jacket",
     price: 190.0,
@@ -86,6 +91,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 1,
     id: "6",
     name: "Signature Bomber Jacket",
     price: 190.0,
@@ -105,6 +111,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 1,
     id: "7",
     name: "Signature Bomber Jacket",
     price: 190.0,
@@ -124,6 +131,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 1,
     id: "8",
     name: "Signature Bomber Jacket",
     price: 190.0,
@@ -143,6 +151,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 2,
     id: "9",
     name: "Signature Bomber Jacket",
     price: 190.0,
@@ -162,6 +171,7 @@ List<Product> products = [
      category: 'Clothes',
   ),
   Product(
+    quantity: 1,
     id: "10",
     name: "Signature Bomber Jacket",
     price: 190.0,
