@@ -22,102 +22,128 @@ class _CartPageState extends State<CartPage> {
               itemCount: CartPage.cardProducts.length,
               itemBuilder: (context, index) {
                 final product = CartPage.cardProducts[index];
-                double quantity = 1;
 
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color.fromARGB(255, 45, 45, 45)
-                          : const Color(0xfff0f0f0),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 8,
+                      horizontal: 8,
                     ),
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color.fromARGB(255, 45, 45, 45) : const Color(0xfff0f0f0),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                     
+                    
                       children: [
-                        //Product Image Section
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              image: DecorationImage(
-                                image: AssetImage(product.images[0]),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                        // 🖼 Product Image
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            product.images[0],
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            fit: BoxFit.cover,
                           ),
                         ),
 
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8,),
 
-                        //Product Description Section
+                        // 📄 Product Info
                         Expanded(
-                          flex: 2,
+                          flex: 1,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 product.name,
                                 style: const TextStyle(
+                                  
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 16,
-                                  fontWeight: FontWeight.bold,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                product.description,
-                                style: const TextStyle(fontSize: 14),
-                                softWrap: true,
-
-                                overflow: TextOverflow.visible,
+                                "Ref. ${product.id}",
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
                         ),
 
-                        const SizedBox(width: 8),
+                        
 
-                        //Price + Quantity + Remove Section
-                        Expanded(
+                        // 🔢 Quantity Buttons
+                        Flexible(
+                          flex: 2,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _quantityButton(Icons.remove, () {
+                                    setState(() {
+                                      if (product.quantity > 1) product.quantity--;
+                                    });
+                                  }),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    child: Text(
+                                      '${product.quantity}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  _quantityButton(Icons.add, () {
+                                    setState(() {
+                                      product.quantity++;
+                                    });
+                                  }),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                
+
+                        // 💰 Price + Delete Icon (بشكل مرن)
+                        Flexible(
                           flex: 1,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                "\$${(product.price * quantity).toStringAsFixed(2)}",
+                                "\$${(product.price * product.quantity).toStringAsFixed(2)}",
                                 style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.06,
-                              ),
-
                               IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.grey,
+                                  size: 20,
+                                ),
                                 onPressed: () {
                                   setState(() {
                                     CartPage.cardProducts.removeAt(index);
                                   });
                                 },
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
                               ),
                             ],
                           ),
@@ -133,7 +159,14 @@ class _CartPageState extends State<CartPage> {
   }
 }
 
-
-
-
-
+Widget _quantityButton(IconData icon, VoidCallback onPressed) {
+  return Container(
+    width: 32,
+    
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      // color: Colors.grey.shade300,
+    ),
+    child: IconButton(icon: Icon(icon, size: 18), onPressed: onPressed),
+  );
+}
