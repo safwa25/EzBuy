@@ -15,7 +15,7 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      appBar: AppBar(title: const Text('My Cart')),
+      appBar: AppBar(title: const Text('My Cart'),centerTitle: true,),
       body: CartPage.cardProducts.isEmpty
           ? const Center(child: Text('No products in cart'))
           : ListView.builder(
