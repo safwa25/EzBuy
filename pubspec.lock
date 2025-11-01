@@ -229,10 +229,10 @@ packages:
     dependency: transitive
     description:
       name: firebase_core_platform_interface
-      sha256: cccb4f572325dc14904c02fcc7db6323ad62ba02536833dddb5c02cac7341c64
+      sha256: "5873a370f0d232918e23a5a6137dbe4c2c47cf017301f4ea02d9d636e52f60f0"
       url: "https://pub.dev"
     source: hosted
-    version: "6.0.2"
+    version: "6.0.1"
   firebase_core_web:
     dependency: transitive
     description:
@@ -532,18 +532,18 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-      sha256: e122c5ea805bb6773bb12ce667611265980940145be920cd09a4b0ec0285cb16
+      sha256: "993381400e94d18469750e5b9dcb8206f15bc09f9da86b9e44a9b0092a0066db"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.20"
+    version: "2.2.18"
   path_provider_foundation:
     dependency: transitive
     description:
       name: path_provider_foundation
-      sha256: efaec349ddfc181528345c56f8eda9d6cccd71c177511b132c6a0ddaefaa2738
+      sha256: "16eef174aacb07e09c351502740fa6254c165757638eba1e9116b0a781201bbd"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.3"
+    version: "2.4.2"
   path_provider_linux:
     dependency: transitive
     description:
@@ -673,10 +673,10 @@ packages:
     dependency: transitive
     description:
       name: vm_service
-      sha256: "45caa6c5917fa127b5dbcfbd1fa60b14e583afdc08bfc96dda38886ca252eb60"
+      sha256: ddfa8d30d89985b96407efce8acbdd124701f96741f2d981ca860662f1c0dc02
       url: "https://pub.dev"
     source: hosted
-    version: "15.0.2"
+    version: "15.0.0"
   web:
     dependency: transitive
     description:

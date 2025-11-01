@@ -28,7 +28,6 @@ class _SplashScreenState extends State<SplashScreen>
     _iconAnimation = Tween<double>(begin: 0.8, end: 1.1).animate(
       CurvedAnimation(parent: _iconController, curve: Curves.easeInOut),
     );
-
     _textController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -40,10 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     Timer(const Duration(seconds: 5), () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const Welcomescreen()),
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>Welcomescreen()));
     });
   }
 
@@ -61,10 +57,9 @@ class _SplashScreenState extends State<SplashScreen>
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFFFFE0B2), 
-              Color(0xFFFFB74D),
-              Color(0xFFFF9800), 
-              Color(0xFFF57C00), 
+             Color(0xFFE0F7FA), 
+             Color(0xFF81D4FA), 
+             Color(0xFF0288D1),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -79,8 +74,9 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Image.asset(
                   "assets/images/white_EB_logo.png",
                   width: MediaQuery.of(context).size.height * 0.15,
+                  )
                 ),
-              ),
+              
               const SizedBox(height: 25),
               FadeTransition(
                 opacity: _textFadeAnimation,

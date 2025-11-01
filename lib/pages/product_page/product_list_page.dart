@@ -72,7 +72,7 @@ class _ProductListPageState extends State<ProductListPage> {
                 margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
                   color:
-                      isDark 
+                      isDark // Use isDarkMode here
                       ? Colors.white.withOpacity(0.1)
                       : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),

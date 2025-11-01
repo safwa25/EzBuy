@@ -1,4 +1,3 @@
-import 'package:ezbuy/core/theme/colors.dart';
 import 'package:flutter/material.dart';
 import '../../utils/product_card.dart';
 import 'product_detail_page.dart';
@@ -49,7 +48,7 @@ class _ProductGridViewState extends State<ProductGridView> {
 
               const SizedBox(height: 12),
 
-              _buildCategoryList(isDark),
+              _buildCategoryList(),
 
               const SizedBox(height: 12),
               Expanded(
@@ -127,7 +126,7 @@ class _ProductGridViewState extends State<ProductGridView> {
     );
   }
 
-  Widget _buildCategoryList(bool isDark) {
+  Widget _buildCategoryList() {
     return SizedBox(
       height: 40,
       child: ListView.builder(
@@ -145,7 +144,7 @@ class _ProductGridViewState extends State<ProductGridView> {
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.lightPrimary
+                    ? const Color(0xFF0026CC)
                     : Colors.grey.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -153,9 +152,7 @@ class _ProductGridViewState extends State<ProductGridView> {
                 child: Text(
                   category,
                   style: TextStyle(
-                    color: isSelected
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : Colors.black87),
+                    color: isSelected ? Colors.white : Colors.black87,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
