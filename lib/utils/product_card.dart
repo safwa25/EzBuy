@@ -2,8 +2,10 @@ import 'package:ezbuy/pages/cart/cart_services.dart';
 import 'package:flutter/material.dart';
 import '../pages/product_page/product_detail_page.dart';
 import '../pages/product_page/models/product_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final Product product;
   final bool showBuyButton;
   final bool isLoggedIn;
@@ -16,17 +18,58 @@ class ProductCard extends StatelessWidget {
   });
 
   @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  late bool isFavorite;
+  final cartService = CartService();
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+  final firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    isFavorite = widget.product.isFavorite;
+  }
+
+  Future<void> toggleFavorite() async {
+    if (userId == null) return;
+
+    final favRef = firestore
+        .collection('users')
+        .doc(userId)
+        .collection('favorites')
+        .doc(widget.product.id);
+
+    try {
+      if (isFavorite) {
+        await favRef.delete();
+      } else {
+        await favRef.set(widget.product.toMap());
+      }
+
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update favorites: $e')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cartService = CartService();
 
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                ProductDetailPage(product: product, isLoggedIn: isLoggedIn),
+            builder: (context) => ProductDetailPage(
+                product: widget.product, isLoggedIn: widget.isLoggedIn),
           ),
         );
       },
@@ -61,7 +104,7 @@ class ProductCard extends StatelessWidget {
                         bottom: Radius.circular(20),
                       ),
                       child: Image.asset(
-                        product.images[0],
+                        widget.product.images[0],
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
@@ -82,17 +125,16 @@ class ProductCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: product.isFavorite
-                            ? const Icon(
-                                Icons.favorite,
-                                size: 24,
-                                color: Colors.red,
-                              )
-                            : const Icon(
-                                Icons.favorite_border,
-                                size: 24,
-                                color: Colors.grey,
-                              ),
+                        child: IconButton(
+                          icon: Icon(
+                            isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            size: 24,
+                            color: isFavorite ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: toggleFavorite,
+                        ),
                       ),
                     ),
                   ],
@@ -109,7 +151,7 @@ class ProductCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        product.name,
+                        widget.product.name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -123,7 +165,7 @@ class ProductCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "\$${product.price}",
+                            "\$${widget.product.price}",
                             style: TextStyle(
                               color: isDark
                                   ? Colors.blueAccent.withOpacity(0.8)
@@ -132,7 +174,7 @@ class ProductCard extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          if (showBuyButton)
+                          if (widget.showBuyButton)
                             Container(
                               width: 38,
                               height: 38,
@@ -148,7 +190,7 @@ class ProductCard extends StatelessWidget {
                                 ),
                                 onPressed: () async {
                                   try {
-                                    await cartService.addToCart(product); 
+                                    await cartService.addToCart(widget.product);
 
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

@@ -1,8 +1,10 @@
+import 'package:ezbuy/pages/cart/cart_services.dart';
+import 'package:ezbuy/pages/cart/mycart.dart';
+import 'package:ezbuy/pages/favorite/favorite_services.dart';
 import 'package:ezbuy/pages/product_page/product_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'Data/products_data.dart' as ProductModel;
-import 'models/product_model.dart';
+import '../../pages/product_page/models/product_model.dart';
 
 
 class FavoritePage extends StatefulWidget {
@@ -12,23 +14,9 @@ class FavoritePage extends StatefulWidget {
   State<FavoritePage> createState() => _FavoritePageState();
 }
 
-class _FavoritePageState extends State<FavoritePage> with SingleTickerProviderStateMixin {
-  final _favoriteProducts = ProductModel.products.where((product) => product.isFavorite).toList();
-  void _removeFromFavorites(int index) {
-    setState(() {
-      _favoriteProducts.removeAt(index);
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Removed from favorites'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: Colors.red.shade400,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
+class _FavoritePageState extends State<FavoritePage> {
+  final _favoriteService = FavoriteService();
+  final _cartService = CartService();
 
   @override
   Widget build(BuildContext context) {
@@ -39,80 +27,107 @@ class _FavoritePageState extends State<FavoritePage> with SingleTickerProviderSt
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.only(left: 20,right: 20, top: 20,bottom: 16),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.red.shade400, Colors.pink.shade600],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.red.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.favorite_rounded,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "My Favorites",
-                        style: GoogleFonts.cairo(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        "${_favoriteProducts.length} items",
-                        style: GoogleFonts.cairo(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.grey.shade400 : Colors.grey.shade800,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            _buildHeader(isDark),
             Expanded(
-              child: _favoriteProducts.isEmpty
-                  ? _buildEmptyState(isDark)
-                  : ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: _favoriteProducts.length,
-                itemBuilder: (context, index) {
-                  final product = _favoriteProducts[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetailPage(product: product),
-                        ),
+              child: StreamBuilder<List<Product>>(
+                stream: _favoriteService.getFavorites(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final favorites = snapshot.data ?? [];
+                  if (favorites.isEmpty) {
+                    return _buildEmptyState(isDark);
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: favorites.length,
+                    itemBuilder: (context, index) {
+                      final product = favorites[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetailPage(
+                                product: product,
+                                isLoggedIn: true,
+                              ),
+                            ),
+                          );
+                        },
+                        child: _buildFavoriteCard(product, index, isDark),
                       );
                     },
-                      child: _buildFavoriteCard(product, index, isDark)
                   );
                 },
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 16),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.red.shade400, Colors.pink.shade600],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.red.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.favorite_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "My Favorites",
+                style: GoogleFonts.cairo(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+              StreamBuilder<List<Product>>(
+                stream: _favoriteService.getFavorites(),
+                builder: (context, snapshot) {
+                  final count = snapshot.data?.length ?? 0;
+                  return Text(
+                    "$count items",
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade800,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -161,10 +176,16 @@ class _FavoritePageState extends State<FavoritePage> with SingleTickerProviderSt
 
   Widget _buildFavoriteCard(Product product, int index, bool isDark) {
     return Dismissible(
-      key: Key(product.name),
+      key: Key(product.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        _removeFromFavorites(index);
+      onDismissed: (direction) async {
+        await _favoriteService.removeFavorite(product.id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Removed from favorites'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -190,17 +211,17 @@ class _FavoritePageState extends State<FavoritePage> with SingleTickerProviderSt
                 child: Container(
                   width: 100,
                   height: 100,
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                  ),
+                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
                   child: Image.asset(
-                    product.images[index],
+                    product.images[0],
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Icon(
                         Icons.shopping_bag_rounded,
                         size: 40,
-                        color: isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+                        color: isDark
+                            ? Colors.grey.shade600
+                            : Colors.grey.shade400,
                       );
                     },
                   ),
@@ -265,8 +286,8 @@ class _FavoritePageState extends State<FavoritePage> with SingleTickerProviderSt
                         color: Colors.red,
                         size: 24,
                       ),
-                      onPressed: () {
-                        _removeFromFavorites(index);
+                      onPressed: () async {
+                        await _favoriteService.removeFavorite(product.id);
                       },
                     ),
                   ),
@@ -282,15 +303,12 @@ class _FavoritePageState extends State<FavoritePage> with SingleTickerProviderSt
                         color: Colors.orange,
                         size: 22,
                       ),
-                      onPressed: () {
+                      onPressed: () async {
+                        await _cartService.addToCart(product);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text('Added to cart'),
+                          const SnackBar(
+                            content: Text('Added to cart'),
                             behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            backgroundColor: Colors.green.shade400,
                           ),
                         );
                       },
