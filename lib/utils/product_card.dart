@@ -1,4 +1,4 @@
-import 'package:ezbuy/pages/cart/mycart.dart';
+import 'package:ezbuy/pages/cart/cart_services.dart';
 import 'package:flutter/material.dart';
 import '../pages/product_page/product_detail_page.dart';
 import '../pages/product_page/models/product_model.dart';
@@ -18,6 +18,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cartService = CartService();
 
     return GestureDetector(
       onTap: () {
@@ -83,15 +84,15 @@ class ProductCard extends StatelessWidget {
                         ),
                         child: product.isFavorite
                             ? const Icon(
-                          Icons.favorite,
-                          size: 24,
-                          color: Colors.red,
-                        )
+                                Icons.favorite,
+                                size: 24,
+                                color: Colors.red,
+                              )
                             : const Icon(
-                          Icons.favorite_border,
-                          size: 24,
-                          color: Colors.grey,
-                        ),
+                                Icons.favorite_border,
+                                size: 24,
+                                color: Colors.grey,
+                              ),
                       ),
                     ),
                   ],
@@ -105,7 +106,6 @@ class ProductCard extends StatelessWidget {
                     vertical: 8,
                   ),
                   child: Column(
-
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -118,7 +118,7 @@ class ProductCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -127,35 +127,45 @@ class ProductCard extends StatelessWidget {
                             style: TextStyle(
                               color: isDark
                                   ? Colors.blueAccent.withOpacity(0.8)
-                                  : Color(0xFF0026CC),
+                                  : const Color(0xFF0026CC),
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           if (showBuyButton)
                             Container(
-                              width: 32,
-                              height: 32,
-
+                              width: 38,
+                              height: 38,
                               decoration: BoxDecoration(
                                 color: Colors.orange.withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Center(
-                                child: IconButton(
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text("Item added to cart"))
-                                    );
-                                    CartPage.cardProducts.add(product);
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>CartPage()));
-                                  },
-                                  icon: Icon(
-                                    Icons.add_shopping_cart,
-                                    size: 20,
-                                    color: Colors.orange,
-                                  ),
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.add_shopping_cart,
+                                  size: 20,
+                                  color: Colors.orange,
                                 ),
+                                onPressed: () async {
+                                  try {
+                                    await cartService.addToCart(product); 
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            Text("Product added to cart!"),
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            "Failed to add to cart: $e"),
+                                      ),
+                                    );
+                                  }
+                                },
                               ),
                             ),
                         ],

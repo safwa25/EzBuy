@@ -1,6 +1,8 @@
+import 'package:ezbuy/pages/cart/cart_services.dart';
 import 'package:flutter/material.dart';
 import 'models/product_model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../cart/mycart.dart';
 
@@ -24,6 +26,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   String selectedSize = "";
   String selectedColor = "";
   int quantity = 1;
+
+  final _cartService = CartService();
+  final _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -75,7 +80,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark
                       ? Colors.white.withOpacity(0.15)
-                      : Color(0xFF0026CC),
+                      : const Color(0xFF0026CC),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -97,17 +102,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isDark
-                      ? const Color(0xFFFF9900)
-                      : const Color(0xFFFF9900),
+                  backgroundColor: const Color(0xFFFF9900),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                onPressed: () {
-                  if (!widget.isLoggedIn) {
+                onPressed: () async {
+                  final user = _auth.currentUser;
+                  if (user == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please login to add items to cart'),
@@ -115,18 +119,35 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         duration: Duration(seconds: 2),
                       ),
                     );
-                  } else {
+                    return;
+                  }
+                  try {
+                    for (int i = 0; i < quantity; i++) {
+                      await _cartService.addToCart(product);
+                    }
+
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Item added to cart")),
+                      const SnackBar(
+                        content: Text('Item added to cart successfully!'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 2),
+                      ),
                     );
-                    CartPage.cardProducts.add(product);
+
+                   
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => CartPage()),
+                      MaterialPageRoute(builder: (context) => const CartPage()),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error adding to cart: $e'),
+                        backgroundColor: Colors.red,
+                      ),
                     );
                   }
                 },
-
                 child: Text(
                   "Add to Cart",
                   style: GoogleFonts.cairo(
@@ -192,9 +213,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 24),
-
             Text(
               "\$${product.price}",
               style: GoogleFonts.cairo(
@@ -203,7 +222,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 color: isDark ? Colors.amber.shade600 : Colors.amber.shade900,
               ),
             ),
-
             const SizedBox(height: 20),
 
             if (product.sizes.isNotEmpty) ...[
@@ -303,7 +321,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ],
             ),
-
             const SizedBox(height: 24),
             Text(
               "Description",
@@ -321,7 +338,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 fontSize: 20,
               ),
             ),
-
             const SizedBox(height: 80),
           ],
         ),
