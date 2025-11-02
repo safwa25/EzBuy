@@ -1,4 +1,5 @@
 import 'package:ezbuy/pages/cart/cart_services.dart';
+import 'package:ezbuy/pages/cart/checkout_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../product_page/models/product_model.dart';
@@ -20,7 +21,7 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF121212) : Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('My Cart'),
+        title: const Text('My Cart',style: TextStyle(fontSize: 28),),
         centerTitle: true,
         backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         foregroundColor: isDark ? Colors.white : Colors.black87,
@@ -52,7 +53,7 @@ class _CartPageState extends State<CartPage> {
         stream: _cartService.getTotalPrice(),
         builder: (context, snapshot) {
           final total = snapshot.data ?? 0.0;
-          return _buildCheckoutBar(total, isDark);
+          return CheckoutBar(total: total, isDark: isDark);
         },
       ),
     );
@@ -227,54 +228,6 @@ class _CartPageState extends State<CartPage> {
       width: 32,
       decoration: const BoxDecoration(shape: BoxShape.circle),
       child: IconButton(icon: Icon(icon, size: 18), onPressed: onPressed),
-    );
-  }
-
-  Widget _buildCheckoutBar(double total, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 4,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Total",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                "\$${total.toStringAsFixed(2)}",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              child: const Text(
-                "Proceed to Checkout",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
