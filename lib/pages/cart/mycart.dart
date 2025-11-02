@@ -206,7 +206,7 @@ class _CartPageState extends State<CartPage> {
                   ),
                   child: IconButton(
                     icon: const Icon(
-                      Icons.close,
+                      Icons.delete,
                       color: Colors.red,
                       size: 22,
                     ),
