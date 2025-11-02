@@ -2,22 +2,21 @@
 import 'package:flutter/material.dart';
 
 class CheckoutBar extends StatelessWidget {
-  final bool isDark;
-  final double total;
-
   const CheckoutBar({
     super.key,
-    required this.isDark,
     required this.total,
+    required this.isDark,
   });
+
+  final double total;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color:
-            isDark ? const Color.fromARGB(255, 45, 45, 45) : const Color(0xfff0f0f0),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -29,7 +28,6 @@ class CheckoutBar extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Total Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -50,9 +48,7 @@ class CheckoutBar extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-               
-              },
+              onPressed: () {},
               child: const Text(
                 "Proceed to Checkout",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
