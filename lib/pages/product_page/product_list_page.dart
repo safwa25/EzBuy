@@ -1,3 +1,4 @@
+import 'package:ezbuy/pages/cart/cart_services.dart';
 import 'package:ezbuy/pages/cart/mycart.dart';
 import 'package:flutter/material.dart';
 import '../../main.dart';
@@ -5,7 +6,6 @@ import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.da
 import '../favorite/favorite_page.dart';
 import 'home.dart';
 import 'ProfilePage.dart';
-
 
 class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key, required bool isLoggedIn});
@@ -16,6 +16,7 @@ class ProductListPage extends StatefulWidget {
 
 class _ProductListPageState extends State<ProductListPage> {
   int _bottomNavIndex = 0;
+  final CartService _cartService = CartService();
 
   final List<Widget> _pages = [
     const ProductGridView(isLoggedIn: true),
@@ -50,18 +51,13 @@ class _ProductListPageState extends State<ProductListPage> {
             ),
           ),
         ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Products",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 26,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ],
+        title: const Text(
+          "Products",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 26,
+            letterSpacing: 0.5,
+          ),
         ),
         centerTitle: true,
         actions: [
@@ -71,50 +67,124 @@ class _ProductListPageState extends State<ProductListPage> {
               return Container(
                 margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
-                  color:
-                      isDark // Use isDarkMode here
+                  color: isDark
                       ? Colors.white.withOpacity(0.1)
                       : Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CartPage()),
-                        );
-                      },
-                      icon: Icon(Icons.add_shopping_cart_rounded),
-                    ),
-                    SizedBox(width: 8),
-                    IconButton(
-                      icon: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder: (child, animation) {
-                          return RotationTransition(
-                            turns: animation,
-                            child: FadeTransition(
-                              opacity: animation,
-                              child: child,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CartPage(),
                             ),
                           );
                         },
-                        child: Icon(
-                          isDark
-                              ? Icons.light_mode_rounded
-                              : Icons.dark_mode_rounded,
-                          key: ValueKey(isDark),
-                          color: mode == ThemeMode.dark
-                              ? Colors.amber.shade300
-                              : Colors.deepOrange.shade600,
-                          size: 26,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Image.asset(
+                              isDark
+                                  ? "assets/images/orange_EB_logo.png"
+                                  : "assets/images/app_icon.png",
+                              width: MediaQuery.of(context).size.width * 0.1,
+                            ),
+
+                            StreamBuilder<int>(
+                              stream: _cartService.cartItemCountStream(),
+                              builder: (context, snapshot) {
+                                int count = snapshot.data ?? 0;
+                                if (count == 0) return const SizedBox();
+
+                                return Positioned(
+                                  top: 0,
+                                  right: count < 10
+                                      ? -2
+                                      : count < 100
+                                      ? -8
+                                      : -16,
+                                  child: StreamBuilder<int>(
+                                    stream: CartService().cartItemCountStream(),
+                                    builder: (context, snapshot) {
+                                      final count = snapshot.data ?? 0;
+
+                                      if (count == 0)
+                                        return const SizedBox.shrink();
+
+                                      final displayCount = count > 100
+                                          ? '+100'
+                                          : '$count';
+
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 2,
+                                          horizontal: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius: BorderRadius.circular(
+                                            100,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.red.withOpacity(
+                                                0.4,
+                                              ),
+                                              blurRadius: 6,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Text(
+                                          displayCount,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                      onPressed: _toggleTheme,
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (child, animation) {
+                            return RotationTransition(
+                              turns: animation,
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            isDark
+                                ? Icons.light_mode_rounded
+                                : Icons.dark_mode_rounded,
+                            key: ValueKey(isDark),
+                            color: mode == ThemeMode.dark
+                                ? Colors.amber.shade300
+                                : Colors.deepOrange.shade600,
+                            size: 26,
+                          ),
+                        ),
+                        onPressed: _toggleTheme,
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -123,20 +193,6 @@ class _ProductListPageState extends State<ProductListPage> {
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
-        switchInCurve: Curves.easeInOut,
-        switchOutCurve: Curves.easeInOut,
-        transitionBuilder: (child, animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0.05, 0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            ),
-          );
-        },
         child: _pages[_bottomNavIndex],
       ),
       floatingActionButton: Container(
@@ -169,38 +225,25 @@ class _ProductListPageState extends State<ProductListPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withOpacity(0.3)
-                  : Colors.grey.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        child: AnimatedBottomNavigationBar(
-          iconSize: 36,
-          activeColor: isDark
-              ? Colors.orange.shade400
-              : Colors.deepOrange.shade600,
-          inactiveColor: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
-          backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-          leftCornerRadius: 32,
-          rightCornerRadius: 32,
-          elevation: 0,
-          icons: const [Icons.favorite_rounded, Icons.person_rounded],
-          activeIndex: _bottomNavIndex == 0 ? -1 : _bottomNavIndex - 1,
-          gapLocation: GapLocation.center,
-          notchSmoothness: NotchSmoothness.verySmoothEdge,
-          onTap: (index) {
-            setState(() {
-              _bottomNavIndex = index + 1;
-            });
-          },
-        ),
+      bottomNavigationBar: AnimatedBottomNavigationBar(
+        iconSize: 36,
+        activeColor: isDark
+            ? Colors.orange.shade400
+            : Colors.deepOrange.shade600,
+        inactiveColor: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        leftCornerRadius: 32,
+        rightCornerRadius: 32,
+        elevation: 0,
+        icons: const [Icons.favorite_rounded, Icons.person_rounded],
+        activeIndex: _bottomNavIndex == 0 ? -1 : _bottomNavIndex - 1,
+        gapLocation: GapLocation.center,
+        notchSmoothness: NotchSmoothness.verySmoothEdge,
+        onTap: (index) {
+          setState(() {
+            _bottomNavIndex = index + 1;
+          });
+        },
       ),
     );
   }

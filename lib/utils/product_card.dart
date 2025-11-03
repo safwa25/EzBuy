@@ -114,7 +114,7 @@ class _ProductCardState extends State<ProductCard> {
                       top: 8,
                       right: 8,
                       child: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.9),
                           shape: BoxShape.circle,
