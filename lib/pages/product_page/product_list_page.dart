@@ -104,9 +104,9 @@ class _ProductListPageState extends State<ProductListPage> {
                                 return Positioned(
                                   top: 0,
                                   right: count < 10
-                                      ? -2
+                                      ? 0
                                       : count < 100
-                                      ? -8
+                                      ? -4
                                       : -16,
                                   child: StreamBuilder<int>(
                                     stream: CartService().cartItemCountStream(),
