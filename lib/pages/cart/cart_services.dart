@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ezbuy/pages/product_page/models/product_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class CartService {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
@@ -60,7 +59,20 @@ class CartService {
 
   /// Get total price
   Stream<double> getTotalPrice() {
-    return getCartItems().map((products) =>
-        products.fold(0, (sum, p) => sum + p.totalPrice));
+    return getCartItems().map(
+      (products) => products.fold(0, (sum, p) => sum + p.totalPrice),
+    );
+  }
+
+  /// Get live count of items in the cart
+  Stream<int> cartItemCountStream() {
+    return _cartRef.snapshots().map((snapshot) {
+      int totalCount = 0;
+      for (var doc in snapshot.docs) {
+        final quantity = (doc.data()['quantity'] ?? 1) as int;
+        totalCount += quantity;
+      }
+      return totalCount;
+    });
   }
 }
