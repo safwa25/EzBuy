@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:ezbuy/pages/cart/payment_page.dart'; // import payment page
 
 class CheckoutBar extends StatelessWidget {
   const CheckoutBar({
@@ -8,8 +8,8 @@ class CheckoutBar extends StatelessWidget {
     required this.isDark,
   });
 
-  final double total;
-  final bool isDark;
+  final double total; // total price from cart
+  final bool isDark;  // dark or light mode
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +28,7 @@ class CheckoutBar extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Total price row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -45,10 +46,20 @@ class CheckoutBar extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
+
+          // Proceed button
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                // Navigate to PaymentPage and pass the total amount
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PaymentPage(totalAmount: total),
+                  ),
+                );
+              },
               child: const Text(
                 "Proceed to Checkout",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
