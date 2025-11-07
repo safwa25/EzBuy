@@ -40,11 +40,12 @@ class _LoginScreenState extends State<LoginScreen> {
           .then((user) {
             if (user != null) {
               _showSnackBar('Login Successful!', Colors.green);
-              Navigator.push(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProductListPage(isLoggedIn: true),
+                  builder: (context) => const ProductListPage(isLoggedIn: true),
                 ),
+                    (Route<dynamic> route) => false,
               );
             } else {
               _showSnackBar('Login Failed. Please try again.', Colors.red);

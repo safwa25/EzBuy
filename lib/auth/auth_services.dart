@@ -23,12 +23,13 @@ class AuthService {
     }
   }
 
-  Future<User?> registerWithEmail(
-    String email,
-    String password, {
-    String? fullName,
-    String? phone,
-  }) async {
+
+  Future<Object?> registerWithEmail(
+      String email,
+      String password, {
+        String? fullName,
+        String? phone,
+      }) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
@@ -46,9 +47,30 @@ class AuthService {
       }
 
       return userCredential.user;
+
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+
+      switch (e.code) {
+        case 'weak-password':
+          errorMessage = 'The password provided is too weak.';
+          break;
+        case 'email-already-in-use':
+          errorMessage = 'The account already exists for that email.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'The email address is not valid.';
+          break;
+        default:
+          errorMessage = 'An unknown Firebase error occurred: ${e.message}';
+      }
+
+      print("Firebase Registration Error: ${errorMessage}");
+      return errorMessage;
+
     } catch (e) {
-      print("Error registering: $e");
-      return null;
+      print("General Registration Error: $e");
+      return 'An unexpected error occurred. Please try again.';;
     }
   }
 

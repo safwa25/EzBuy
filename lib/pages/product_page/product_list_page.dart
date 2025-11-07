@@ -51,7 +51,8 @@ class _ProductListPageState extends State<ProductListPage> {
             ),
           ),
         ),
-        title: const Text(
+        title: Text(
+          _bottomNavIndex==2? "Profile":
           "Products",
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -181,7 +182,12 @@ class _ProductListPageState extends State<ProductListPage> {
                             size: 26,
                           ),
                         ),
-                        onPressed: _toggleTheme,
+                        onPressed:  () {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (!mounted) return;
+                            _toggleTheme();
+                          });
+                        },
                       ),
                     ],
                   ),
