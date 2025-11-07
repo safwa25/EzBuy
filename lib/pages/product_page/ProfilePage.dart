@@ -5,8 +5,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-
+import '../../auth/auth_services.dart';
+import '../../core/app/wrapper.dart';
+import '../../core/theme/colors.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -20,45 +23,43 @@ class _ProfilePageState extends State<ProfilePage> {
   final User? user = FirebaseAuth.instance.currentUser;
   Map<String, dynamic>? userData;
   bool isLoading = true;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
     fetchUserData();
   }
-  final ImagePicker _picker = ImagePicker();
 
+  // --- Image Handling and Data Fetching (Unchanged) ---
   Future<void> pickAndUploadImage() async {
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image == null) return;
-
-
       final bytes = await File(image.path).readAsBytes();
-
       final base64String = base64Encode(bytes);
-
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user!.uid)
           .update({'photo': base64String});
 
-
-      setState(() {
-        userData!['photo'] = base64String;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Photo updated successfully!')),
-      );
+      if (mounted) {
+        setState(() {
+          userData!['photo'] = base64String;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Photo updated successfully!')),
+        );
+      }
     } catch (e) {
       print('Error picking/uploading image: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to upload image')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to upload image')),
+        );
+      }
     }
   }
-
 
   Future<void> fetchUserData() async {
     if (user != null) {
@@ -68,130 +69,235 @@ class _ProfilePageState extends State<ProfilePage> {
             .doc(user!.uid)
             .get();
         if (doc.exists) {
-          setState(() {
-            userData = doc.data() as Map<String, dynamic>;
-            isLoading = false;
-          });
+          if (mounted) {
+            setState(() {
+              userData = doc.data() as Map<String, dynamic>;
+              isLoading = false;
+            });
+          }
         } else {
+          if (mounted) {
+            setState(() {
+              isLoading = false;
+            });
+          }
+        }
+      } catch (e) {
+        print('Error fetching user data: $e');
+        if (mounted) {
           setState(() {
             isLoading = false;
           });
         }
-      } catch (e) {
-        print('Error fetching user data: $e');
-        setState(() {
-          isLoading = false;
-        });
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    final createdAt = userData!['createdAt'] != null
-        ? DateFormat('MMMM dd, yyyy • hh:mm a')
-        .format((userData!['createdAt'] as Timestamp).toDate())
-        : 'Unknown';
-
 
     if (userData == null) {
       return const Center(child: Text('No user data found.'));
     }
 
+    final backgroundColor = isDark ? const Color(0xFF121212) : Colors.grey.shade50;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: Colors.teal,
+      backgroundColor: backgroundColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          child: Column(
+            children: [
+              _buildProfileAvatar(isDark),
+              const SizedBox(height: 20),
+              _buildProfileCard(isDark, userData!),
+              const SizedBox(height: 30),
+              _buildLogoutButton(),
+            ],
+          ),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.teal.shade200,
-                  backgroundImage: userData!['photo'] != null
-                      ? MemoryImage(base64Decode(userData!['photo']))
-                      : null,
-                  child: userData!['photo'] == null
-                      ? const Icon(Icons.person, size: 60, color: Colors.white)
-                      : null,
-                ),
+    );
+  }
 
 
-                Positioned(
-                  bottom: 4,
-                  right: 4,
-                  child: GestureDetector(
-                    onTap: pickAndUploadImage,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.teal,
-                        shape: BoxShape.circle,
-                        border: Border.all(width: 2, color: Colors.white),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 3,
-                            offset: const Offset(1, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 15,
-                      ),
+  Widget _buildProfileAvatar(bool isDark) {
+    final avatarColor = isDark ? AppColors.lightTextSecondary : AppColors.lightPrimary;
+
+    return Center(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              CircleAvatar(
+                radius: 60,
+                backgroundColor: avatarColor,
+                backgroundImage: userData!['photo'] != null
+                    ? MemoryImage(base64Decode(userData!['photo']))
+                    : null,
+                child: userData!['photo'] == null
+                    ? const Icon(Icons.person, size: 60, color: Colors.white)
+                    : null,
+              ),
+              Positioned(
+                bottom: 4,
+                right: 4,
+                child: GestureDetector(
+                  onTap: pickAndUploadImage,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightSecondary,
+                      shape: BoxShape.circle,
+                      border: Border.all(width: 2, color: isDark ? Colors.black : Colors.white),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 3,
+                          offset: const Offset(1, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                      size: 15,
                     ),
                   ),
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            userData!['fullName'] ?? 'User Name',
+            style: GoogleFonts.cairo( // Used GoogleFonts
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+          Text(
+            userData!['email'] ?? 'N/A',
+            style: GoogleFonts.cairo( // Used GoogleFonts
+              fontSize: 16,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-              ],
-            ),
+  Widget _buildProfileCard(bool isDark, Map<String, dynamic> data) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.8),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildDetailRow(
+            Icons.phone,
+            'Phone Number',
+            data['phone'] ?? 'N/A',
+            isDark,
+          ),
+        ],
+      ),
+    );
+  }
 
-            const SizedBox(height: 20),
-            Text(
-              userData!['fullName'] ?? '',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  Widget _buildDetailRow(
+      IconData icon,
+      String label,
+      String value,
+      bool isDark,
+      ) {
+    final accentColor = AppColors.lightSecondary;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+            color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Icon(
+              icon,
+              color: accentColor,
+              size: 20,
             ),
-            const SizedBox(height: 8),
-            Text(
-              userData!['email'] ?? '',
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const Divider(height: 40),
-            Row(
-              children: [
-                const Icon(Icons.phone, color: Colors.teal),
-                const SizedBox(width: 10),
-                Text(
-                  userData!['phone'] ?? '',
-                  style: const TextStyle(fontSize: 16),
+            const SizedBox(width: 10),
+            Flexible(
+              child: Text(
+                value,
+                style: GoogleFonts.cairo(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Row(
-              children: [
-                const Icon(Icons.calendar_today, color: Colors.teal),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: Text(
-                    "Time of creation: $createdAt",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () async {
+          await authServiceNotifier.value.signOut();
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const Wrapper()),
+            );
+          }
+        },
+        icon: const Icon(Icons.logout_rounded, color: Colors.white),
+        label: Text(
+          'Logout',
+          style: GoogleFonts.cairo(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red.shade600,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 5,
         ),
       ),
     );

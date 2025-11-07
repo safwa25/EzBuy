@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'package:ezbuy/core/app/wrapper.dart';
 import 'package:ezbuy/pages/product_page/welcomescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,12 +53,11 @@ class _SplashScreenState extends State<SplashScreen>
     bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
 
     if (isFirstTime) {
-      // أول مرة فقط → اعرض السبلاتش ثم روح للـ Welcome
       Timer(const Duration(seconds: 5), () async {
         await prefs.setBool('isFirstTime', false);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Welcomescreen()),
+          MaterialPageRoute(builder: (context) => const Wrapper()),
         );
       });
     } else {
@@ -65,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen>
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Welcomescreen()),
+          MaterialPageRoute(builder: (context) => const Wrapper()),
         );
       });
     }

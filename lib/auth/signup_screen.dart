@@ -53,13 +53,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
             phone: _phoneController.text.trim(),
           )
           .then((user) {
-            if (user != null) {
+            if (user is User) {
               _showSnackBar("Account created successfully!", Colors.green);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const LoginScreen()),
               );
-            } else {
+            }else if (user is String) {
+              _showSnackBar(user, Colors.red);
+            }
+            else {
               _showSnackBar("Sign up failed. Please try again.", Colors.red);
             }
           });
