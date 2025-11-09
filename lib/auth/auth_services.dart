@@ -74,7 +74,14 @@ class AuthService {
     }
   }
 
-
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      print("Password reset email sent successfully");
+    } catch (e) {
+      print("Error sending password reset email: $e");
+    }
+  }
   Future<User?> signInWithGoogle() async {
     try {
 

@@ -5,7 +5,7 @@ import '../../main.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import '../favorite/favorite_page.dart';
 import 'home.dart';
-import 'ProfilePage.dart';
+import '../profile/ProfilePage.dart';
 
 class ProductListPage extends StatefulWidget {
   const ProductListPage({super.key, required bool isLoggedIn});
@@ -159,7 +159,8 @@ class _ProductListPageState extends State<ProductListPage> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      IconButton(
+                      if(_bottomNavIndex == 0)
+                       IconButton(
                         icon: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 300),
                           transitionBuilder: (child, animation) {
