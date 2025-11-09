@@ -31,7 +31,6 @@ class _ProfilePageState extends State<ProfilePage> {
     fetchUserData();
   }
 
-  // --- Image Handling and Data Fetching (Unchanged) ---
   Future<void> pickAndUploadImage() async {
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -177,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 12),
           Text(
             userData!['fullName'] ?? 'User Name',
-            style: GoogleFonts.cairo( // Used GoogleFonts
+            style: GoogleFonts.cairo(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black87,
@@ -185,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           Text(
             userData!['email'] ?? 'N/A',
-            style: GoogleFonts.cairo( // Used GoogleFonts
+            style: GoogleFonts.cairo(
               fontSize: 16,
               color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
             ),
@@ -225,7 +224,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-
   Widget _buildDetailRow(
       IconData icon,
       String label,
