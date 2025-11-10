@@ -4,95 +4,113 @@
     "name": "Air Jordan 1 Retro",
     "price": 180.00,
     "category": "Shoes",
-    "stock": 15,
     "imageUrl": [
-      "https://i.pinimg.com/736x/0e/66/28/0e6628c244eba991906e52dd0d033bc2.jpg",
-      "https://i.pinimg.com/736x/b3/9f/8a/b39f8a95862ef4088243fb363f668dfc.jpg",
-      "https://i.pinimg.com/736x/10/24/fd/1024fd6351aff27ae38dbf1b71a6d7a2.jpg",
-      "https://i.pinimg.com/1200x/a4/c2/b3/a4c2b3c3c14efc1a65375ec5ea75b09e.jpg"
+      "https://i.imgur.com/RnGkNtr.jpeg",
+      "https://i.imgur.com/38NImtI.jpeg",
+      "https://i.imgur.com/epFoUHU.jpeg",
+      "https://i.imgur.com/wq4gfQW.jpeg"
     ],
     "description": "This classic high-top sneaker features the iconic Air Jordan 1 silhouette in a UNC Toe color blocking, paying homage to Michael Jordan's alma mater, the University of North Carolina. It features an upper made from premium leather.",
-    "Sizes": ["38", "39", "40", "41", "42", "43"],
-    "Colors": ["Black", "Blue", "Red", "Black and Blue"]
+    "stock": {
+      "Black": {"38": 5, "39": 4, "40": 3, "41": 2, "42": 1, "43": 1},
+      "Blue": {"38": 4, "39": 4, "40": 3, "41": 3, "42": 2, "43": 2},
+      "Red": {"38": 3, "39": 3, "40": 2, "41": 2, "42": 1, "43": 1},
+      "Black and Blue": {"38": 3, "39": 3, "40": 2, "41": 1, "42": 1, "43": 1}
+    }
   },
   {
     "id": "p002",
     "name": "Casual Sneakers",
     "price": 150,
     "category": "Shoes",
-    "stock": 25,
     "imageUrl": [
-      "https://i.pinimg.com/736x/ef/0f/d0/ef0fd0106a2d8b2c7b71d49a14a6217f.jpg",
-      "https://i.pinimg.com/1200x/f0/f7/5d/f0f75d8e45b0a74d1edf3c5f8d4956a4.jpg",
-      "https://i.pinimg.com/736x/35/c3/82/35c3824d31aa6124bb864b8cd64cae0d.jpg",
-      "https://i.pinimg.com/736x/6c/1d/99/6c1d9916033e7670b262540c0a5ffdbe.jpg",
-      "https://i.pinimg.com/736x/af/89/88/af8988f60161559ee2b919376dd42077.jpg"
+      "https://i.imgur.com/HDhLIZQ.jpeg",
+      "https://i.imgur.com/LFFNqwz.jpeg",
+      "https://i.imgur.com/NeWMf43.jpeg",
+      "https://i.imgur.com/WfbpfKq.jpeg",
+      "https://i.imgur.com/yRPuXuD.jpeg"
     ],
-    "description": "An effortlessly cool and versatile low-top sneaker. This shoe uses a sleek two-tone colorway featuring a crisp leather base overlays on the toe, heel, and Swoosh. The design is finished with white laces and a bright white midsole, making it a clean and easy-to-style option perfect for casual wear.",
-    "Sizes": ["38", "39", "40", "41", "42", "43"],
-    "Colors": ["White","Pink","Brown","Blue", "Black"]
+    "description": "An effortlessly cool and versatile low-top sneaker. This shoe uses a sleek two-tone colorway featuring a crisp leather base overlays on the toe, heel, and Swoosh.",
+    "stock": {
+      "White": {"38": 10, "39": 9, "40": 9, "41": 8, "42": 7, "43": 6},
+      "Pink": {"38": 5, "39": 5, "40": 4, "41": 3, "42": 2, "43": 1},
+      "Brown": {"38": 5, "39": 5, "40": 4, "41": 4, "42": 3, "43": 2},
+      "Blue": {"38": 3, "39": 3, "40": 2, "41": 2, "42": 1, "43": 1},
+      "Black": {"38": 2, "39": 2, "40": 1, "41": 1, "42": 1, "43": 0}
+    }
   },
   {
     "id": "p003",
     "name": "Men's Japanese Style Cherry Blossom",
     "price": 55,
-    "category": "Makeup",
-    "stock": 50,
+    "category": "Clothes",
     "imageUrl": [
-      "https://i.pinimg.com/736x/7b/06/9c/7b069ca6befd8009eddf12f22ce54549.jpg",
-      "https://i.pinimg.com/736x/ff/2d/cf/ff2dcf3449cffda8a939677c9b3e3d9b.jpg",
-      "https://i.pinimg.com/736x/11/64/b9/1164b9cc2501f9809783afa570403833.jpg",
-      "https://i.pinimg.com/1200x/31/42/81/314281ab780c3c907450c00e34e1c777.jpg"
-
+      "https://i.imgur.com/qSVTlmU.jpeg",
+      "https://i.imgur.com/kPxTrpI.jpeg",
+      "http://i.imgur.com/az4jnLZ.jpeg",
+      "https://i.imgur.com/DfHTIdX.jpeg"
     ],
     "description": "Make a bold statement with this comfortable, Japanese-inspired pullover hoodie. The back features a striking red and white cherry blossom (Sakura) tree graphic that embodies the fleeting beauty of nature.",
-    "Sizes": ["S", "M", "L","XL"],
-    "Colors": ["Navy Blue", "Cream", "White", "Beige"]
+    "stock": {
+      "Navy Blue": {"S": 12, "M": 10, "L": 8, "XL": 6},
+      "Cream": {"S": 10, "M": 9, "L": 8, "XL": 7},
+      "White": {"S": 15, "M": 14, "L": 12, "XL": 10},
+      "Black": {"S": 13, "M": 11, "L": 10, "XL": 9}
+    }
   },
   {
     "id": "p004",
     "name": "Grateful Lifestyle Graphic Varsity Jacket",
     "price": 130,
     "category": "Clothes",
-    "stock": 30,
     "imageUrl": [
-      "https://i.pinimg.com/736x/b0/34/d2/b034d263df359a2bab233c9f620a9249.jpg",
-      "https://i.pinimg.com/736x/3e/ac/a4/3eaca44574926d675aebfc6f3994819d.jpg",
-      "https://i.pinimg.com/736x/93/a0/fd/93a0fd0655e88b2f4e82a3ab678ecd29.jpg",
-      "https://i.pinimg.com/736x/80/18/bd/8018bd1c23465bdc3b1e902e9ec70a95.jpg",
-      "https://i.pinimg.com/736x/e1/e3/07/e1e307e6a36a4ec0525476adc8d3837c.jpg"
+      "https://i.imgur.com/zBlMD9G.jpeg",
+      "https://i.imgur.com/Mk6NLDw.jpeg",
+      "https://i.imgur.com/OaK98Ox.jpeg",
+      "https://i.imgur.com/y8ttkWN.jpeg",
+      "https://i.imgur.com/bhCoYGs.jpeg",
+      "https://i.imgur.com/lHHjnfr.jpeg"
     ],
-    "description": "This jacket fuses the classic varsity bomber silhouette with a distinctive, multi-layered streetwear graphic aesthetic. It features a solid body with contrasting sleeves and a built-in hood, giving it a layered, dynamic look.",
-    "Sizes": ["S", "M", "L", "XL"],
-    "Colors": ["Green","Cream","Beige and white","Brown","Red"]
+    "description": "This jacket fuses the classic varsity bomber silhouette with a distinctive, multi-layered streetwear graphic aesthetic. It features a solid body with contrasting sleeves and a built-in hood.",
+    "stock": {
+      "Green": {"S": 7, "M": 6, "L": 5, "XL": 4},
+      "Cream": {"S": 5, "M": 5, "L": 4, "XL": 3},
+      "Beige and White": {"S": 4, "M": 4, "L": 3, "XL": 2},
+      "Brown": {"S": 6, "M": 5, "L": 4, "XL": 3},
+      "Red": {"S": 8, "M": 7, "L": 6, "XL": 5},
+      "pink": {"S": 8, "M": 7, "L": 6, "XL": 5}
+    }
   },
   {
     "id": "p005",
     "name": "Denim Oversized Jacket",
     "price": 160,
     "category": "Clothes",
-    "stock": 18,
     "imageUrl": [
-      "https://i.pinimg.com/736x/b5/81/cb/b581cb893bd4d85dd3729702516adcbc.jpg",
-      "https://i.pinimg.com/736x/5c/b2/c2/5cb2c26050da941c0b1c643f2e246d7d.jpg",
-      "https://i.pinimg.com/736x/86/a6/10/86a610195cff500561ee4c5ee226de01.jpg"
+      "https://i.imgur.com/3P3sD1i.jpeg",
+      "https://i.imgur.com/ElRouH5.jpeg",
+      "https://i.imgur.com/UtVnMZJ.jpeg"
     ],
     "description": "Trendy oversized denim jacket with a relaxed fit and distressed edges for a casual vibe.",
-    "Sizes": ["S", "M", "L","Xl"],
-    "Colors": ["Green", "Brown","Black"]
+    "stock": {
+      "Green": {"S": 5, "M": 4, "L": 3, "XL": 2},
+      "Brown": {"S": 6, "M": 5, "L": 4, "XL": 3},
+      "Black": {"S": 7, "M": 6, "L": 5, "XL": 4}
+    }
   },
   {
     "id": "p006",
     "name": "Samurai Jacket",
     "price": 120,
     "category": "Clothes",
-    "stock": 20,
     "imageUrl": [
-      "https://i.pinimg.com/736x/9d/b6/5a/9db65a2e3780f2858f2404b1f834c0ec.jpg",
-      "https://i.pinimg.com/1200x/23/4e/3d/234e3d3d7b98c5b535d73c4b09cd0ac1.jpg"
+      "https://i.imgur.com/Uxqcuyi.jpeg",
+      "https://i.imgur.com/X578Tmm.jpeg"
     ],
     "description": "This striking pullover hoodie features an immersive, Japanese-inspired brushstroke graphic across the entire front. The design captures a dramatic, timeless scene with an aesthetic reminiscent of traditional Sumie ink painting.",
-    "Sizes": ["S", "M", "L", "Xl"],
-    "Colors": ["White","Beige"]
+    "stock": {
+      "White": {"S": 10, "M": 9, "L": 8, "XL": 7},
+      "Beige": {"S": 8, "M": 7, "L": 6, "XL": 5}
+    }
   }
 ]

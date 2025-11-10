@@ -69,7 +69,7 @@ class _ProductCardState extends State<ProductCard> {
           context,
           MaterialPageRoute(
             builder: (context) => ProductDetailPage(
-                product: widget.product, isLoggedIn: widget.isLoggedIn),
+                productId: widget.product.id, isLoggedIn: widget.isLoggedIn),
           ),
         );
       },
@@ -103,7 +103,7 @@ class _ProductCardState extends State<ProductCard> {
                         top: Radius.circular(20),
                         bottom: Radius.circular(20),
                       ),
-                      child: Image.asset(
+                      child: Image.network(
                         widget.product.images[0],
                         fit: BoxFit.cover,
                         width: double.infinity,

@@ -51,7 +51,7 @@ class _FavoritePageState extends State<FavoritePage> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ProductDetailPage(
-                                product: product,
+                                productId: product.id,
                                 isLoggedIn: true,
                               ),
                             ),

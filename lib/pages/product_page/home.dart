@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../utils/product_card.dart';
 import 'product_detail_page.dart';
-import 'Data/products_data.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../product_page/models/product_model.dart';
 
 class ProductGridView extends StatefulWidget {
-    final bool isLoggedIn;
+  final bool isLoggedIn;
   const ProductGridView({super.key, required this.isLoggedIn});
 
   @override
@@ -28,14 +28,6 @@ class _ProductGridViewState extends State<ProductGridView> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final filteredProducts = products.where((product) {
-      final matchesCategory =
-          selectedCategory == 'All' || product.category == selectedCategory;
-      final matchesSearch =
-          product.name.toLowerCase().contains(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    }).toList();
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -45,60 +37,83 @@ class _ProductGridViewState extends State<ProductGridView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSearchBar(),
-
               const SizedBox(height: 12),
-
-              _buildCategoryList(isDark:isDark),
-
+              _buildCategoryList(),
               const SizedBox(height: 12),
               Expanded(
-                child: filteredProducts.isEmpty
-                    ? const Center(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('products')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
                         child: Text(
                           'No products found',
                           style: TextStyle(fontSize: 18),
                         ),
-                      )
-                    : GridView.builder(
-                        padding: const EdgeInsets.all(6),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.68,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
+                      );
+                    }
+
+
+                    final allProducts = snapshot.data!.docs
+                        .map((doc) => Product.fromFirestore(doc))
+                        .toList();
+
+                    final filteredProducts = allProducts.where((product) {
+                      final matchesCategory = selectedCategory == 'All' ||
+                          product.category == selectedCategory;
+                      final matchesSearch = product.name
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase());
+                      return matchesCategory && matchesSearch;
+                    }).toList();
+
+                    if (filteredProducts.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No products found',
+                          style: TextStyle(fontSize: 18),
                         ),
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (context, index) {
-                          final product = filteredProducts[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductDetailPage(product: product),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: isDark
-                                        ? Colors.black.withOpacity(0.3)
-                                        : Colors.grey.withOpacity(0.2),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: ProductCard(product: product,showBuyButton: true,isLoggedIn: widget.isLoggedIn,),
-                            ),
-                          );
-                        },
+                      );
+                    }
+
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(6),
+                      gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.68,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
                       ),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = filteredProducts[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetailPage(productId: product.id),
+                              ),
+                            );
+                          },
+                          child: ProductCard(
+                            product: product,
+                            showBuyButton: true,
+                            isLoggedIn: widget.isLoggedIn,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -106,7 +121,6 @@ class _ProductGridViewState extends State<ProductGridView> {
       ),
     );
   }
-
 
   Widget _buildSearchBar() {
     return TextField(
@@ -117,7 +131,7 @@ class _ProductGridViewState extends State<ProductGridView> {
         filled: true,
         fillColor: Colors.grey.withOpacity(0.15),
         contentPadding:
-            const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+        const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: BorderSide.none,
@@ -126,7 +140,7 @@ class _ProductGridViewState extends State<ProductGridView> {
     );
   }
 
-  Widget _buildCategoryList({required bool isDark}) {
+  Widget _buildCategoryList() {
     return SizedBox(
       height: 40,
       child: ListView.builder(
@@ -141,7 +155,7 @@ class _ProductGridViewState extends State<ProductGridView> {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 6),
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: isSelected
                     ? const Color(0xFF0026CC)
@@ -151,11 +165,8 @@ class _ProductGridViewState extends State<ProductGridView> {
               child: Center(
                 child: Text(
                   category,
-                   style: TextStyle(
-                
-                    color: isSelected 
-                        ? Colors.white 
-                        : (isDark ? Colors.white : Colors.black87),
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black87,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

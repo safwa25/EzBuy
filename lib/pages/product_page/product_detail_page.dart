@@ -1,18 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ezbuy/pages/cart/cart_services.dart';
 import 'package:flutter/material.dart';
 import 'models/product_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import '../cart/mycart.dart';
 
 class ProductDetailPage extends StatefulWidget {
-  final Product product;
+  final String productId;
   final bool isLoggedIn;
 
   const ProductDetailPage({
     super.key,
-    required this.product,
+    required this.productId,
     this.isLoggedIn = false,
   });
 
@@ -30,10 +30,29 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   final _cartService = CartService();
   final _auth = FirebaseAuth.instance;
 
+  final Map<String, Color> colorMap = {
+    'Black': Colors.black,
+    'Blue': Colors.blue,
+    'Red': Colors.red,
+    'White': Colors.white,
+    'Pink': Colors.pink,
+    'Brown': Colors.brown,
+    'Green': Colors.green,
+    'Cream': Color(0xFFFFFDD0),
+    'Beige': Color(0xFFF5F5DC),
+    'Black and Blue': Colors.blueGrey,
+    // Add more colors here as needed
+  };
+
+
+  Product? product;
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    fetchProduct();
   }
 
   @override
@@ -42,16 +61,55 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     super.dispose();
   }
 
+  Future<void> fetchProduct() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(widget.productId)
+          .get();
+
+      if (doc.exists) {
+        setState(() {
+          product = Product.fromFirestore(doc);
+          isLoading = false;
+        });
+      } else {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Product not found')),
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading product: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final product = widget.product;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (product == null) {
+      return const Scaffold(
+        body: Center(child: Text('Product not found')),
+      );
+    }
+
+    final currentProduct = product!;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          product.name,
+          currentProduct.name,
           style: GoogleFonts.cairo(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
@@ -121,9 +179,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     );
                     return;
                   }
+
+                  if (selectedColor.isEmpty || selectedSize.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please select a color and size'),
+                        backgroundColor: Colors.redAccent,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+
                   try {
                     for (int i = 0; i < quantity; i++) {
-                      await _cartService.addToCart(product);
+                      await _cartService.addToCart(currentProduct);
                     }
 
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -134,7 +204,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       ),
                     );
 
-                   
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const CartPage()),
@@ -166,23 +235,27 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // --- Images ---
             SizedBox(
               height: 300,
               child: Stack(
                 children: [
                   PageView.builder(
                     controller: _pageController,
-                    itemCount: product.images.length,
+                    itemCount: currentProduct.images.length,
                     onPageChanged: (index) {
                       setState(() {
-                        _currentImageIndex = index;
+                        _currentImageIndex = index.clamp(0, currentProduct.images.length - 1);
                       });
                     },
                     itemBuilder: (context, index) {
+                      if (index >= currentProduct.images.length) {
+                        return const SizedBox();
+                      }
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(16),
-                        child: Image.asset(
-                          product.images[index],
+                        child: Image.network(
+                          currentProduct.images[index],
                           fit: BoxFit.cover,
                           width: double.infinity,
                         ),
@@ -195,7 +268,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     right: 0,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(product.images.length, (index) {
+                      children: List.generate(currentProduct.images.length, (index) {
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 4),
                           width: _currentImageIndex == index ? 10 : 6,
@@ -213,9 +286,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
+
+            // --- Price ---
             Text(
-              "\$${product.price}",
+              "\$${currentProduct.price}",
               style: GoogleFonts.cairo(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -224,7 +300,50 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
             const SizedBox(height: 20),
 
-            if (product.sizes.isNotEmpty) ...[
+            // --- Colors ---
+            if (currentProduct.colors.isNotEmpty) ...[
+              Text(
+                "Color",
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: currentProduct.colors.map((colorHex) {
+                  final colorValue = colorMap[colorHex] ?? Colors.grey; // fallback
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedColor = colorHex;
+                        selectedSize = "";
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: 35,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: colorValue,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: selectedColor == colorHex
+                              ? theme.colorScheme.primary
+                              : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+            ],
+
+            // --- Sizes ---
+            if (currentProduct.sizes.isNotEmpty) ...[
               Text(
                 "Size",
                 style: GoogleFonts.cairo(
@@ -235,19 +354,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
-                children: product.sizes.map((size) {
+                children: currentProduct.sizes.map((size) {
                   return ChoiceChip(
-                    label: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 4,
-                      ),
-                      child: Text(
-                        size,
-                        style: GoogleFonts.cairo(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    label: Text(
+                      size,
+                      style: GoogleFonts.cairo(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     selected: selectedSize == size,
@@ -262,56 +375,32 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               const SizedBox(height: 20),
             ],
 
+            // --- Quantity ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (product.colors.isNotEmpty) ...[
-                  Row(
-                    children: product.colors.map((colorHex) {
-                      final color = Color(
-                        int.parse(colorHex.substring(1, 7), radix: 16) +
-                            0xFF000000,
-                      );
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedColor = colorHex;
-                          });
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: 35,
-                          height: 35,
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: selectedColor == colorHex
-                                  ? theme.colorScheme.primary
-                                  : Colors.transparent,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                Text(
+                  "Quantity",
+                  style: GoogleFonts.cairo(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
-                ],
+                ),
                 DropdownButton<int>(
                   value: quantity,
                   items: List.generate(10, (index) => index + 1)
                       .map(
                         (qty) => DropdownMenuItem(
-                          value: qty,
-                          child: Text(
-                            "$qty",
-                            style: GoogleFonts.cairo(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      value: qty,
+                      child: Text(
+                        "$qty",
+                        style: GoogleFonts.cairo(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                      )
+                      ),
+                    ),
+                  )
                       .toList(),
                   onChanged: (value) {
                     setState(() {
@@ -321,7 +410,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 ),
               ],
             ),
+
             const SizedBox(height: 24),
+
+            // --- Description ---
             Text(
               "Description",
               style: GoogleFonts.cairo(
@@ -331,7 +423,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              product.description,
+              currentProduct.description,
               style: GoogleFonts.cairo(
                 color: isDark ? Colors.white70 : Colors.black87,
                 height: 1.4,

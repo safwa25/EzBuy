@@ -3,13 +3,13 @@ import 'package:ezbuy/auth/signup_screen.dart';
 import 'package:flutter/material.dart';
 import '../../utils/product_card.dart';
 import 'product_detail_page.dart';
-import 'Data/products_data.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../product_page/models/product_model.dart';
 
 class Welcomescreen extends StatefulWidget {
-    final bool isLoggedIn;
+  final bool isLoggedIn;
 
-   const Welcomescreen({super.key, this.isLoggedIn=false});
+  const Welcomescreen({super.key, this.isLoggedIn = false});
 
   @override
   State<Welcomescreen> createState() => _WelcomescreenState();
@@ -31,14 +31,6 @@ class _WelcomescreenState extends State<Welcomescreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final filteredProducts = products.where((product) {
-      final matchesCategory =
-          selectedCategory == 'All' || product.category == selectedCategory;
-      final matchesSearch =
-          product.name.toLowerCase().contains(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    }).toList();
-
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -47,7 +39,6 @@ class _WelcomescreenState extends State<Welcomescreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-        
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -61,17 +52,16 @@ class _WelcomescreenState extends State<Welcomescreen> {
                   Row(
                     children: [
                       ElevatedButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginScreen(),
-                    ),
-                  );
-                },
-                child: const Text('Login'),
-              ),
-
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text('Login'),
+                      ),
                       const SizedBox(width: 8),
                       OutlinedButton(
                         onPressed: () {
@@ -96,7 +86,6 @@ class _WelcomescreenState extends State<Welcomescreen> {
 
               const SizedBox(height: 16),
 
-          
               TextField(
                 onChanged: (value) => setState(() => searchQuery = value),
                 decoration: InputDecoration(
@@ -105,7 +94,7 @@ class _WelcomescreenState extends State<Welcomescreen> {
                   filled: true,
                   fillColor: Colors.grey.withOpacity(0.15),
                   contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
@@ -115,7 +104,7 @@ class _WelcomescreenState extends State<Welcomescreen> {
 
               const SizedBox(height: 12),
 
- 
+
               SizedBox(
                 height: 40,
                 child: ListView.builder(
@@ -141,8 +130,7 @@ class _WelcomescreenState extends State<Welcomescreen> {
                           child: Text(
                             category,
                             style: TextStyle(
-                              color:
-                                  isSelected ? Colors.white : Colors.black87,
+                              color: isSelected ? Colors.white : Colors.black87,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -154,59 +142,82 @@ class _WelcomescreenState extends State<Welcomescreen> {
               ),
 
               const SizedBox(height: 12),
+
+
               Expanded(
-                child: filteredProducts.isEmpty
-                    ? const Center(
+                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: FirebaseFirestore.instance
+                      .collection('products')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
                         child: Text(
                           'No products found',
                           style: TextStyle(fontSize: 18),
                         ),
-                      )
-                    : GridView.builder(
-                        padding: const EdgeInsets.all(6),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.68,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
+                      );
+                    }
+
+
+                    final allProducts = snapshot.data!.docs
+                        .map((doc) => Product.fromFirestore(doc))
+                        .toList();
+
+                    final filteredProducts = allProducts.where((product) {
+                      final matchesCategory = selectedCategory == 'All' ||
+                          product.category == selectedCategory;
+                      final matchesSearch = product.name
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase());
+                      return matchesCategory && matchesSearch;
+                    }).toList();
+
+                    if (filteredProducts.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No products found',
+                          style: TextStyle(fontSize: 18),
                         ),
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (context, index) {
-                          final product = filteredProducts[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductDetailPage(product: product),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: isDark
-                                        ? Colors.black.withOpacity(0.3)
-                                        : Colors.grey.withOpacity(0.2),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                         
-                              child: ProductCard(
-                                product: product,
-                                showBuyButton: false, 
-                                isLoggedIn: false,
-                              ),
-                            ),
-                          );
-                        },
+                      );
+                    }
+
+                    return GridView.builder(
+                      padding: const EdgeInsets.all(6),
+                      gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.68,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
                       ),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = filteredProducts[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetailPage(productId: product.id),
+                              ),
+                            );
+                          },
+                          child: ProductCard(
+                            product: product,
+                            showBuyButton: false,
+                            isLoggedIn: widget.isLoggedIn,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
