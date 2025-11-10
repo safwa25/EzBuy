@@ -206,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Align(
       alignment: Alignment.centerRight,
       child: TextButton(
-        onPressed: () {},
+        onPressed: () => _showResetPasswordSheet(context),
         child: Text(
           "Forgot Password?",
           style: GoogleFonts.poppins(
@@ -276,4 +276,55 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
+}
+
+void _showResetPasswordSheet(context) {
+  showModalBottomSheet(
+    context: context,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+    ),
+    builder: (context) {
+      final emailController = TextEditingController();
+
+      return Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Reset Password",
+              style: GoogleFonts.poppins(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 14),
+            CustomTextField(
+              controller: emailController,
+              hint: "Enter your email",
+              icon: Icons.email,
+            ),
+            SizedBox(height: 20),
+            GradientButton(
+              text: "Send Reset Link",
+              fontSize: 20,
+              onPressed: () async {
+                final email = emailController.text.trim();
+                await authServiceNotifier.value.sendPasswordResetEmail(email);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Reset email sent!", style: GoogleFonts.poppins(fontSize: 18)),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 14),
+          ],
+        ),
+      );
+    },
+  );
 }
