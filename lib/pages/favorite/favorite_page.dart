@@ -1,5 +1,4 @@
 import 'package:ezbuy/pages/cart/cart_services.dart';
-import 'package:ezbuy/pages/cart/mycart.dart';
 import 'package:ezbuy/pages/favorite/favorite_services.dart';
 import 'package:ezbuy/pages/product_page/product_detail_page.dart';
 import 'package:flutter/material.dart';

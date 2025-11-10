@@ -65,12 +65,12 @@ class AuthService {
           errorMessage = 'An unknown Firebase error occurred: ${e.message}';
       }
 
-      print("Firebase Registration Error: ${errorMessage}");
+      print("Firebase Registration Error: $errorMessage");
       return errorMessage;
 
     } catch (e) {
       print("General Registration Error: $e");
-      return 'An unexpected error occurred. Please try again.';;
+      return 'An unexpected error occurred. Please try again.';
     }
   }
 

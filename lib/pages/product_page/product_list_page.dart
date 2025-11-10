@@ -114,8 +114,9 @@ class _ProductListPageState extends State<ProductListPage> {
                                     builder: (context, snapshot) {
                                       final count = snapshot.data ?? 0;
 
-                                      if (count == 0)
+                                      if (count == 0) {
                                         return const SizedBox.shrink();
+                                      }
 
                                       final displayCount = count > 100
                                           ? '+100'

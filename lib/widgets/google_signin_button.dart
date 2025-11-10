@@ -7,11 +7,11 @@ class GoogleSignInButton extends StatelessWidget {
   final bool showDivider;
 
   const GoogleSignInButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     this.buttonText = 'Continue with Google',
     this.showDivider = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +51,16 @@ class GoogleSignInButton extends StatelessWidget {
   Widget _buildGoogleButton() {
     return OutlinedButton(
       onPressed: onPressed,
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        side: BorderSide(
+          color: const Color.fromARGB(255, 221, 221, 221),
+          width: 1,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: Colors.transparent,
+        minimumSize: const Size(double.infinity, 56),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -72,16 +82,6 @@ class GoogleSignInButton extends StatelessWidget {
             ),
           ),
         ],
-      ),
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        side: BorderSide(
-          color: const Color.fromARGB(255, 221, 221, 221)!,
-          width: 1,
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: Colors.transparent,
-        minimumSize: const Size(double.infinity, 56),
       ),
     );
   }

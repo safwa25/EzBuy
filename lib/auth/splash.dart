@@ -1,7 +1,6 @@
 
 import 'dart:async';
 import 'package:ezbuy/core/app/wrapper.dart';
-import 'package:ezbuy/pages/product_page/welcomescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

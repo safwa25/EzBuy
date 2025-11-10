@@ -1,4 +1,5 @@
 import 'package:ezbuy/pages/product_page/product_list_page.dart';
+import 'package:ezbuy/pages/product_page/welcomescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart'; 
 import '../widgets/auth_background.dart';
@@ -7,7 +8,6 @@ import '../widgets/gradient_button.dart';
 import '../utils/validators.dart';
 import 'signup_screen.dart';
 import 'auth_services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/google_signin_button.dart'; 
 
 class LoginScreen extends StatefulWidget {
@@ -72,7 +72,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _showSnackBar('Google Sign-In cancelled or failed', Colors.red);
     }
   }
- 
+
+  void _continueAsGuest() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const Welcomescreen(isLoggedIn: false),
+      ),
+    );
+  }
 
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -120,6 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   showDivider: true,
                 ),
                 
+                
+                const SizedBox(height: 20),
+                    _buildGuestLoginButton(),
                 
                 const SizedBox(height: 30),
                 _buildSignUpPrompt(),
@@ -212,6 +223,35 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildSignInButton() {
     return GradientButton(text: "Log In", onPressed: _submitForm);
   }
+
+
+  Widget _buildGuestLoginButton() {
+    return OutlinedButton.icon(
+      onPressed: _continueAsGuest,
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+        side: const BorderSide(color: Color.fromARGB(255, 225, 222, 222), width: 1.5),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        minimumSize: const Size(double.infinity, 56),
+      ),
+      icon: const Icon(
+        Icons.person_outline,
+        color: Colors.black87,
+        size: 24,
+      ),
+      label: Text(
+        "Continue AS a Guest",
+        style: GoogleFonts.poppins(
+          color: Colors.black87,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
 
   Widget _buildSignUpPrompt() {
     return Row(

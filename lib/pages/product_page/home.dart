@@ -48,7 +48,7 @@ class _ProductGridViewState extends State<ProductGridView> {
 
               const SizedBox(height: 12),
 
-              _buildCategoryList(),
+              _buildCategoryList(isDark:isDark),
 
               const SizedBox(height: 12),
               Expanded(
@@ -126,7 +126,7 @@ class _ProductGridViewState extends State<ProductGridView> {
     );
   }
 
-  Widget _buildCategoryList() {
+  Widget _buildCategoryList({required bool isDark}) {
     return SizedBox(
       height: 40,
       child: ListView.builder(
@@ -151,8 +151,11 @@ class _ProductGridViewState extends State<ProductGridView> {
               child: Center(
                 child: Text(
                   category,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black87,
+                   style: TextStyle(
+                
+                    color: isSelected 
+                        ? Colors.white 
+                        : (isDark ? Colors.white : Colors.black87),
                     fontWeight: FontWeight.bold,
                   ),
                 ),

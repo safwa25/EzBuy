@@ -1,3 +1,4 @@
+import 'package:ezbuy/pages/product_page/changepassword.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,7 +14,7 @@ import '../../core/theme/colors.dart';
 
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -117,7 +118,9 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildProfileAvatar(isDark),
               const SizedBox(height: 20),
               _buildProfileCard(isDark, userData!),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
+                _buildChangePasswordButton(isDark),
+                 const SizedBox(height: 30),
               _buildLogoutButton(),
             ],
           ),
@@ -270,6 +273,38 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+Widget _buildChangePasswordButton(bool isDark) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ChangePasswordPage(),
+            ),
+          );
+        },
+        icon: const Icon(Icons.lock_reset, color: Colors.white),
+        label: Text(
+          'Change Password',
+          style: GoogleFonts.cairo(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isDark ? Colors.orange.shade600 : Colors.blue.shade600, 
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 5,
+        ),
+      ),
+    );
+  }
   Widget _buildLogoutButton() {
     return SizedBox(
       width: double.infinity,
