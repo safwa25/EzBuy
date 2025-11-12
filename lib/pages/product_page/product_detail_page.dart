@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ezbuy/pages/cart/mycart.dart';
+import '../cart/mycart.dart';
 import 'blocs/product_detail_bloc.dart';
-import 'package:ezbuy/pages/cart/cart_services.dart';
+import '../cart/cart_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ezbuy/pages/product_page/models/product_model.dart';
+import 'models/product_model.dart';
+import '../favorite/favorite_services.dart';
+
+List<String> sortSizes(List<String> sizes) {
+  const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "38", "39", "40", "41", "42", "43"];
+  return sizeOrder.where((s) => sizes.contains(s)).toList();
+}
 
 class ProductDetailPage extends StatelessWidget {
   final String productId;
@@ -18,17 +24,22 @@ class ProductDetailPage extends StatelessWidget {
     this.isLoggedIn = false,
   });
 
+
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ProductDetailBloc()
         ..add(LoadProduct(productId)),
-      child: ProductDetailView(),
+      child: ProductDetailView(isLoggedIn: isLoggedIn),
     );
   }
 }
 
 class ProductDetailView extends StatelessWidget {
+  final FavoriteService _favoriteService = FavoriteService();
+  final bool isLoggedIn;
+
   final Map<String, Color> colorMap = const {
     'Black': Colors.black,
     'Blue': Colors.blue,
@@ -42,7 +53,7 @@ class ProductDetailView extends StatelessWidget {
     'Black and Blue': Colors.blueGrey,
   };
 
-  ProductDetailView({super.key});
+  ProductDetailView({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -77,79 +88,69 @@ class ProductDetailView extends StatelessWidget {
                 ),
               ],
             ),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark
-                          ? Colors.white.withOpacity(0.15)
-                          : const Color(0xFF0026CC),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    onPressed: state.product == null
-                        ? null
-                        : () {
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Viewing ${state.product!.name}')),
-                      );
-                    },
-                    icon: const Icon(Icons.remove_red_eye, size: 24),
-                    label: Text(
-                      "View",
-                      style: GoogleFonts.cairo(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF9900),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    onPressed: state.canAddToCart
-                        ? () {
-                      bloc.add(const AddToCartPressed());
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Item added to cart!'),
-                          backgroundColor: Colors.green,
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const CartPage()),
-                      );
-                    }
-                        : null,
+                if (!isLoggedIn)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
-                      "Add to Cart",
+                      "You must be logged in to add to cart",
                       style: GoogleFonts.cairo(
-                        fontSize: 18,
+                        color: Colors.red,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
+
+
+                Row(
+                  children: [
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFF9900),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        onPressed: (isLoggedIn && state.canAddToCart)
+                            ? () {
+                          bloc.add(const AddToCartPressed());
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Item added to cart!'),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const CartPage()),
+                          );
+                        }
+                            : null,
+                        child: Text(
+                          "Add to Cart",
+                          style: GoogleFonts.cairo(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           );
         },
       ),
+
 
       body: BlocConsumer<ProductDetailBloc, ProductDetailState>(
         listener: (context, state) {
@@ -241,7 +242,7 @@ class ProductDetailView extends StatelessWidget {
                 ],
 
 
-                if (product.sizes.isNotEmpty) ...[
+                if (product.sizes.isNotEmpty && product.category != "Accessories" && product.category != "Makeup") ...[
                   Text(
                     "Size",
                     style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 24),
@@ -249,7 +250,7 @@ class ProductDetailView extends StatelessWidget {
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
-                    children: product.sizes.map((size) {
+                    children: sortSizes(product.sizes).map((size) {
                       return ChoiceChip(
                         label: Text(
                           size,
@@ -273,27 +274,91 @@ class ProductDetailView extends StatelessWidget {
                       "Quantity",
                       style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
-                    DropdownButton<int>(
-                      value: state.quantity,
-                      items: List.generate(10, (index) => index + 1)
-                          .map(
-                            (qty) => DropdownMenuItem(
-                          value: qty,
+                    Row(
+                      children: [
+
+                        IconButton(
+                          onPressed: state.quantity > 1
+                              ? () {
+                            context
+                                .read<ProductDetailBloc>()
+                                .add(ChangeQuantity(state.quantity - 1));
+                          }
+                              : null,
+                          icon: const Icon(Icons.remove_circle_outline),
+                          color: Colors.grey.shade700,
+                          iconSize: 28,
+                        ),
+
+                        Container(
+                          width: 48,
+                          height: 40,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade400),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           child: Text(
-                            "$qty",
-                            style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold),
+                            "${state.quantity}",
+                            style: GoogleFonts.cairo(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          context.read<ProductDetailBloc>().add(ChangeQuantity(value));
-                        }
-                      },
+
+
+                        IconButton(
+                          onPressed: (state.availableStock > 0 && state.quantity < state.availableStock)
+                              ? () {
+                            context
+                                .read<ProductDetailBloc>()
+                                .add(ChangeQuantity(state.quantity + 1));
+                          }
+                              : () {
+                            if (state.availableStock > 0 &&
+                                state.quantity >= state.availableStock) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "Only ${state.availableStock} in stock!",
+                                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                                  ),
+                                  backgroundColor: Colors.redAccent,
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.add_circle_outline),
+                          color: Colors.grey.shade700,
+                          iconSize: 28,
+                        ),
+
+                      ],
                     ),
                   ],
                 ),
+                if (state.availableStock > 0)
+                  Text(
+                    "In stock: ${state.availableStock}",
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      color: Colors.green.shade700,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                else
+                  Text(
+                    "Out of stock",
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+
 
                 const SizedBox(height: 24),
 

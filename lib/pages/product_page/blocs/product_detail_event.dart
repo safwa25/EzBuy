@@ -42,3 +42,11 @@ class ChangeQuantity extends ProductDetailEvent {
 class AddToCartPressed extends ProductDetailEvent {
   const AddToCartPressed();
 }
+
+class UpdateStock extends ProductDetailEvent {
+  final int availableStock;
+  const UpdateStock(this.availableStock);
+
+  @override
+  List<Object?> get props => [availableStock];
+}

@@ -64,10 +64,22 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
     ));
   }
 
-  void _onChangeQuantity(
-      ChangeQuantity event, Emitter<ProductDetailState> emit) {
-    emit(state.copyWith(quantity: event.quantity, errorMessage: null));
+  void _onChangeQuantity(ChangeQuantity event, Emitter<ProductDetailState> emit) {
+    if (event.quantity > state.availableStock) {
+      emit(state.copyWith(
+        errorMessage: "Only ${state.availableStock} item(s) available.",
+        quantity: state.availableStock,
+      ));
+    } else if (event.quantity < 1) {
+      emit(state.copyWith(quantity: 1));
+    } else {
+      emit(state.copyWith(
+        quantity: event.quantity,
+        errorMessage: null,
+      ));
+    }
   }
+
 
   Future<void> _onAddToCartPressed(
       AddToCartPressed event, Emitter<ProductDetailState> emit) async {
