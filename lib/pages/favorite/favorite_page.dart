@@ -211,7 +211,7 @@ class _FavoritePageState extends State<FavoritePage> {
                   width: 100,
                   height: 100,
                   color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                  child: Image.asset(
+                  child: Image.network(
                     product.images[0],
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {

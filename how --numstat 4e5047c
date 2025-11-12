@@ -1,0 +1,16 @@
+[33mcommit 4e5047c5adce3ecd8bf8f0505f4c3b60f42fd531[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Yousef-Elhady <yousefehabelhady@gmail.com>
+Date:   Tue Nov 11 00:02:09 2025 +0200
+
+    implemented firebase product, made the application get products from it, and modified the model to implement stock for each color
+
+ assets/products.json                             | 108 [32m++++++[m[31m-----[m
+ lib/pages/favorite/favorite_page.dart            |   2 [32m+[m[31m-[m
+ lib/pages/product_page/home.dart                 | 141 [32m+++++++[m[31m-------[m
+ lib/pages/product_page/models/product_model.dart |  59 [32m+++++[m[31m-[m
+ lib/pages/product_page/product_detail_page.dart  | 226 [32m++++++++++++++++[m[31m-------[m
+ lib/pages/product_page/upload_products.dart      |  29 [32m+++[m
+ lib/pages/product_page/welcomescreen.dart        | 161 [32m++++++++[m[31m--------[m
+ lib/utils/product_card.dart                      |   4 [32m+[m[31m-[m
+ pubspec.yaml                                     |   3 [32m+[m
+ 9 files changed, 472 insertions(+), 261 deletions(-)

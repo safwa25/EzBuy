@@ -40,7 +40,7 @@ class Product {
       'name': name,
       'price': price,
       'description': description,
-      'images': images,
+      'imageUrl': images,
       'sizes': sizes,
       'colors': colors,
       'category': category,
@@ -55,7 +55,7 @@ class Product {
         ? Map<String, dynamic>.from(map['stock'])
         : null;
 
-    // ✅ Safely extract colors and sizes from stock
+
     final colors = stock?.keys.map((e) => e.toString()).toList() ?? <String>[];
 
     final sizes = (stock != null && stock.isNotEmpty)
@@ -67,7 +67,7 @@ class Product {
       name: map['name'] ?? '',
       price: (map['price'] ?? 0).toDouble(),
       description: map['description'] ?? '',
-      // ✅ Handle imageUrl or images safely
+
       images: ((map['imageUrl'] ?? map['images']) ?? [])
           .map<String>((e) => e.toString())
           .toList(),
@@ -86,7 +86,7 @@ class Product {
         ? Map<String, dynamic>.from(data['stock'])
         : null;
 
-    // ✅ Safely handle nulls when reading nested fields
+
     final colors = stock?.keys.map((e) => e.toString()).toList() ?? <String>[];
 
     final sizes = (stock != null && stock.isNotEmpty)
