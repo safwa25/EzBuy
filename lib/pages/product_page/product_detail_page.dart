@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../cart/mycart.dart';
 import 'blocs/product_detail_bloc.dart';
-import '../cart/cart_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'models/product_model.dart';
 import '../favorite/favorite_services.dart';
@@ -17,28 +16,46 @@ List<String> sortSizes(List<String> sizes) {
 class ProductDetailPage extends StatelessWidget {
   final String productId;
   final bool isLoggedIn;
+  final String? initialSelectedColor;
+  final String? initialSelectedSize;
 
   const ProductDetailPage({
     super.key,
     required this.productId,
     this.isLoggedIn = false,
+    this.initialSelectedColor,
+    this.initialSelectedSize,
   });
-
-
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProductDetailBloc()
-        ..add(LoadProduct(productId)),
+      create: (_) {
+        final bloc = ProductDetailBloc()..add(LoadProduct(productId));
+        // it's safer to dispatch initial selection after load; leaving as-is is okay
+        if (initialSelectedColor != null) {
+          bloc.add(SelectColor(initialSelectedColor!));
+        }
+        if (initialSelectedSize != null) {
+          bloc.add(SelectSize(initialSelectedSize!));
+        }
+        return bloc;
+      },
       child: ProductDetailView(isLoggedIn: isLoggedIn),
     );
   }
 }
 
-class ProductDetailView extends StatelessWidget {
-  final FavoriteService _favoriteService = FavoriteService();
+class ProductDetailView extends StatefulWidget {
   final bool isLoggedIn;
+  ProductDetailView({super.key, required this.isLoggedIn});
+
+  @override
+  State<ProductDetailView> createState() => _ProductDetailViewState();
+}
+
+class _ProductDetailViewState extends State<ProductDetailView> {
+  final FavoriteService _favoriteService = FavoriteService();
 
   final Map<String, Color> colorMap = const {
     'Black': Colors.black,
@@ -53,7 +70,18 @@ class ProductDetailView extends StatelessWidget {
     'Black and Blue': Colors.blueGrey,
   };
 
-  ProductDetailView({super.key, required this.isLoggedIn});
+  // track isAdding transitions
+  bool _wasAdding = false;
+
+  void _showMessage(String message, {bool error = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+        backgroundColor: error ? Colors.redAccent : Colors.green,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +100,25 @@ class ProductDetailView extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: BlocBuilder<ProductDetailBloc, ProductDetailState>(
+      // Bottom bar uses BLoC state; button will dispatch one event only.
+      bottomNavigationBar: BlocConsumer<ProductDetailBloc, ProductDetailState>(
+        listener: (context, state) {
+          // show errors
+          if (state.errorMessage != null) {
+            _showMessage(state.errorMessage!, error: true);
+          }
+
+          // detect transition: was adding -> now not adding and no error => success
+          if (_wasAdding && !state.isAdding && state.errorMessage == null) {
+            _showMessage('Item added to cart!');
+            if (mounted) {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartPage()));
+            }
+          }
+
+          // update tracker
+          _wasAdding = state.isAdding;
+        },
         builder: (context, state) {
           final bloc = context.read<ProductDetailBloc>();
 
@@ -91,7 +137,7 @@ class ProductDetailView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (!isLoggedIn)
+                if (!widget.isLoggedIn)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
@@ -103,7 +149,6 @@ class ProductDetailView extends StatelessWidget {
                       ),
                     ),
                   ),
-
 
                 Row(
                   children: [
@@ -118,29 +163,25 @@ class ProductDetailView extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        onPressed: (isLoggedIn && state.canAddToCart)
+                        // disable when loading product OR when adding to cart
+                        onPressed: (widget.isLoggedIn && state.canAddToCart && !state.isLoading && !state.isAdding)
                             ? () {
-                          bloc.add(const AddToCartPressed());
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Item added to cart!'),
-                              backgroundColor: Colors.green,
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const CartPage()),
-                          );
-                        }
+                                bloc.add(const AddToCartPressed());
+                              }
                             : null,
-                        child: Text(
-                          "Add to Cart",
-                          style: GoogleFonts.cairo(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: state.isAdding
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              )
+                            : Text(
+                                "Add to Cart",
+                                style: GoogleFonts.cairo(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
                   ],
@@ -151,20 +192,10 @@ class ProductDetailView extends StatelessWidget {
         },
       ),
 
-
-      body: BlocConsumer<ProductDetailBloc, ProductDetailState>(
-        listener: (context, state) {
-          if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: Colors.redAccent,
-              ),
-            );
-          }
-        },
+      body: BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
-          if (state.isLoading) {
+          if (state.isLoading && state.product == null) {
+            // still loading product data
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -178,7 +209,6 @@ class ProductDetailView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 if (product.images.isNotEmpty)
                   SizedBox(
                     height: 300,
@@ -196,7 +226,6 @@ class ProductDetailView extends StatelessWidget {
                   ),
                 const SizedBox(height: 24),
 
-
                 Text(
                   "\$${product.price}",
                   style: GoogleFonts.cairo(
@@ -206,7 +235,6 @@ class ProductDetailView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-
 
                 if (product.colors.isNotEmpty) ...[
                   Text(
@@ -241,7 +269,6 @@ class ProductDetailView extends StatelessWidget {
                   const SizedBox(height: 20),
                 ],
 
-
                 if (product.sizes.isNotEmpty && product.category != "Accessories" && product.category != "Makeup") ...[
                   Text(
                     "Size",
@@ -266,7 +293,6 @@ class ProductDetailView extends StatelessWidget {
                   const SizedBox(height: 20),
                 ],
 
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -276,20 +302,16 @@ class ProductDetailView extends StatelessWidget {
                     ),
                     Row(
                       children: [
-
                         IconButton(
                           onPressed: state.quantity > 1
                               ? () {
-                            context
-                                .read<ProductDetailBloc>()
-                                .add(ChangeQuantity(state.quantity - 1));
-                          }
+                                  context.read<ProductDetailBloc>().add(ChangeQuantity(state.quantity - 1));
+                                }
                               : null,
                           icon: const Icon(Icons.remove_circle_outline),
                           color: Colors.grey.shade700,
                           iconSize: 28,
                         ),
-
                         Container(
                           width: 48,
                           height: 40,
@@ -306,35 +328,20 @@ class ProductDetailView extends StatelessWidget {
                             ),
                           ),
                         ),
-
-
                         IconButton(
                           onPressed: (state.availableStock > 0 && state.quantity < state.availableStock)
                               ? () {
-                            context
-                                .read<ProductDetailBloc>()
-                                .add(ChangeQuantity(state.quantity + 1));
-                          }
+                                  context.read<ProductDetailBloc>().add(ChangeQuantity(state.quantity + 1));
+                                }
                               : () {
-                            if (state.availableStock > 0 &&
-                                state.quantity >= state.availableStock) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    "Only ${state.availableStock} in stock!",
-                                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-                                  ),
-                                  backgroundColor: Colors.redAccent,
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                            }
-                          },
+                                  if (state.availableStock > 0 && state.quantity >= state.availableStock) {
+                                    _showMessage("Only ${state.availableStock} in stock!", error: true);
+                                  }
+                                },
                           icon: const Icon(Icons.add_circle_outline),
                           color: Colors.grey.shade700,
                           iconSize: 28,
                         ),
-
                       ],
                     ),
                   ],
@@ -358,10 +365,7 @@ class ProductDetailView extends StatelessWidget {
                     ),
                   ),
 
-
-
                 const SizedBox(height: 24),
-
 
                 Text(
                   "Description",
