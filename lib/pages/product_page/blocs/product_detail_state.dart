@@ -13,13 +13,20 @@ class ProductDetailState extends Equatable {
 
   final List<String> availableSizes;
 
-  bool get canAddToCart =>
-      !isLoading &&
-      !isAdding &&
-      !isOutOfStock &&
-      selectedColor != null &&
-      selectedSize != null &&
-      availableStock > 0;
+  bool get canAddToCart {
+    final isOneSizeProduct = product != null &&
+        (product!.sizes.isEmpty ||
+            product!.category == "Accessories" ||
+            product!.category == "Makeup");
+
+    return !isLoading &&
+        !isAdding &&
+        !isOutOfStock &&
+        selectedColor != null &&
+        availableStock > 0 &&
+        (isOneSizeProduct || selectedSize != null);
+  }
+
 
   const ProductDetailState({
     this.product,

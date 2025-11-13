@@ -33,14 +33,13 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
 
       final product = Product.fromFirestore(doc);
 
-      // initial available stock: total across all colors/sizes
       final initialAvailable = product.availableQuantity();
 
       emit(state.copyWith(
         product: product,
         isLoading: false,
         availableStock: initialAvailable,
-        // reset selections on load
+
         selectedColor: null,
         selectedSize: null,
         quantity: 1,
@@ -60,7 +59,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       return;
     }
 
-    // compute total available for this color (sum of sizes for that color)
+
     final stockForColor = product.stock != null && product.stock!.containsKey(event.color)
         ? Map<String, int>.from(product.stock![event.color]!)
         : <String, int>{};
@@ -69,7 +68,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       totalForColor += q;
     });
 
-    // build sizes list from stockForColor keys (optional: you may want to update product.sizes too)
+
     final availableSizes = stockForColor.keys.toList();
 
     emit(state.copyWith(
@@ -78,9 +77,9 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       availableStock: totalForColor,
       isOutOfStock: totalForColor == 0,
       errorMessage: null,
-      // optional: carry available sizes in state if you want to render them separately
+
       availableSizes: availableSizes,
-      quantity: 1, // reset desired qty when color changes
+      quantity: 1,
     ));
   }
 
@@ -97,7 +96,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       return;
     }
 
-    // Safely read stock map for color -> size
+
     final sizesMap = product.stock != null && product.stock!.containsKey(color)
         ? Map<String, int>.from(product.stock![color]!)
         : <String, int>{};
@@ -108,9 +107,8 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       selectedSize: event.size,
       availableStock: available,
       isOutOfStock: available == 0,
-      quantity: 1,
       errorMessage: null,
-      quantity: available > 0 ? 1 : 0, // reset or zero if OOS
+      quantity: available > 0 ? 1 : 0,
     ));
   }
 
@@ -119,7 +117,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
     final avail = state.availableStock;
 
     if (avail <= 0) {
-      // nothing available
+
       emit(state.copyWith(
         errorMessage: "This variant is out of stock.",
         quantity: 0,
@@ -153,8 +151,13 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       emit(state.copyWith(errorMessage: "Product not loaded."));
       return;
     }
-    if (color == null || size == null) {
-      emit(state.copyWith(errorMessage: "Please select a color and size first."));
+
+    final isOneSizeProduct =
+            product.category == "Accessories" ||
+            product.category == "Makeup";
+
+    if (color == null || (!isOneSizeProduct && size == null)) {
+      emit(state.copyWith(errorMessage: "Please select a color ${isOneSizeProduct ? '' : ' and size'} first."));
       return;
     }
 
@@ -163,20 +166,19 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       return;
     }
 
-    // final safety check against the product model (client-side)
+
     final available = product.availableQuantity(color: color, size: size);
     if (available < qty) {
       emit(state.copyWith(errorMessage: "Only $available item(s) left in stock."));
       return;
     }
 
-    // Use isAdding flag for add-to-cart operation (separate from isLoading which is product load)
+
     emit(state.copyWith(isAdding: true, errorMessage: null));
     try {
-      // single call: add requested quantity of the selected variant
+
       await _cartService.addToCart(product, qty: qty, color: color, size: size);
 
-      // success — reset isAdding and keep other state
       emit(state.copyWith(isAdding: false, errorMessage: null));
     } catch (e) {
       emit(state.copyWith(isAdding: false, errorMessage: "Failed to add to cart: $e"));
