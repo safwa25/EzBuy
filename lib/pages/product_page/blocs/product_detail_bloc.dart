@@ -24,7 +24,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
       final doc =
-      await _firestore.collection('products').doc(event.productId).get();
+          await _firestore.collection('products').doc(event.productId).get();
       if (!doc.exists) {
         emit(state.copyWith(
             isLoading: false, errorMessage: 'Product not found'));
@@ -32,7 +32,20 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       }
 
       final product = Product.fromFirestore(doc);
-      emit(state.copyWith(product: product, isLoading: false));
+
+      // initial available stock: total across all colors/sizes
+      final initialAvailable = product.availableQuantity();
+
+      emit(state.copyWith(
+        product: product,
+        isLoading: false,
+        availableStock: initialAvailable,
+        // reset selections on load
+        selectedColor: null,
+        selectedSize: null,
+        quantity: 1,
+        errorMessage: null,
+      ));
     } catch (e) {
       emit(state.copyWith(
           isLoading: false, errorMessage: 'Failed to load product: $e'));
@@ -41,35 +54,55 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
 
   void _onSelectColor(SelectColor event, Emitter<ProductDetailState> emit) {
     final product = state.product;
-    if (product == null) return;
-
-    final color = event.color;
-    final stockMap = product.stock?[color];
-
-    int available = 0;
-    String? size;
-
-    if (stockMap != null && stockMap.keys.length == 1 && stockMap.containsKey("One Size")) {
-      size = "One Size";
-      available = stockMap["One Size"] ?? 0;
+    if (product == null) {
+      emit(state.copyWith(
+          errorMessage: 'Product not loaded. Cannot select color.'));
+      return;
     }
+
+    // compute total available for this color (sum of sizes for that color)
+    final stockForColor = product.stock != null && product.stock!.containsKey(event.color)
+        ? Map<String, int>.from(product.stock![event.color]!)
+        : <String, int>{};
+    int totalForColor = 0;
+    stockForColor.forEach((_, q) {
+      totalForColor += q;
+    });
+
+    // build sizes list from stockForColor keys (optional: you may want to update product.sizes too)
+    final availableSizes = stockForColor.keys.toList();
 
     emit(state.copyWith(
       selectedColor: event.color,
-      selectedSize: size,
-      availableStock: available,
-      isOutOfStock: available == 0 ,
-      quantity: 1,
+      selectedSize: null,
+      availableStock: totalForColor,
+      isOutOfStock: totalForColor == 0,
       errorMessage: null,
+      // optional: carry available sizes in state if you want to render them separately
+      availableSizes: availableSizes,
+      quantity: 1, // reset desired qty when color changes
     ));
   }
 
   void _onSelectSize(SelectSize event, Emitter<ProductDetailState> emit) {
     final color = state.selectedColor;
-    if (color == null || state.product == null) return;
+    final product = state.product;
+    if (product == null) {
+      emit(state.copyWith(errorMessage: 'Product not loaded.'));
+      return;
+    }
+    if (color == null) {
+      emit(state.copyWith(
+          errorMessage: 'Please select a color before selecting size.'));
+      return;
+    }
 
-    final stockMap = state.product!.stock?[color] ?? {};
-    final available = stockMap[event.size] ?? 0;
+    // Safely read stock map for color -> size
+    final sizesMap = product.stock != null && product.stock!.containsKey(color)
+        ? Map<String, int>.from(product.stock![color]!)
+        : <String, int>{};
+
+    final available = (sizesMap[event.size] ?? 0);
 
     emit(state.copyWith(
       selectedSize: event.size,
@@ -77,57 +110,76 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       isOutOfStock: available == 0,
       quantity: 1,
       errorMessage: null,
+      quantity: available > 0 ? 1 : 0, // reset or zero if OOS
     ));
   }
 
   void _onChangeQuantity(ChangeQuantity event, Emitter<ProductDetailState> emit) {
-    if (event.quantity > state.availableStock) {
+    final desired = event.quantity;
+    final avail = state.availableStock;
+
+    if (avail <= 0) {
+      // nothing available
       emit(state.copyWith(
-        errorMessage: "Only ${state.availableStock} item(s) available.",
-        quantity: state.availableStock,
+        errorMessage: "This variant is out of stock.",
+        quantity: 0,
       ));
-    } else if (event.quantity < 1) {
-      emit(state.copyWith(quantity: 1));
+      return;
+    }
+
+    if (desired < 1) {
+      emit(state.copyWith(quantity: 1, errorMessage: null));
+      return;
+    }
+
+    if (desired > avail) {
+      emit(state.copyWith(
+        errorMessage: "Only $avail item(s) available.",
+        quantity: avail,
+      ));
     } else {
-      emit(state.copyWith(
-        quantity: event.quantity,
-        errorMessage: null,
-      ));
+      emit(state.copyWith(quantity: desired, errorMessage: null));
     }
   }
-
 
   Future<void> _onAddToCartPressed(
       AddToCartPressed event, Emitter<ProductDetailState> emit) async {
     final product = state.product;
     final color = state.selectedColor;
     final size = state.selectedSize;
+    final qty = state.quantity;
 
-    if (product == null || color == null || size == null) {
-      emit(state.copyWith(
-          errorMessage: "Please select a color and size first."));
+    if (product == null) {
+      emit(state.copyWith(errorMessage: "Product not loaded."));
+      return;
+    }
+    if (color == null || size == null) {
+      emit(state.copyWith(errorMessage: "Please select a color and size first."));
       return;
     }
 
-    final available = state.availableStock;
-    if (available == 0) {
-      emit(state.copyWith(errorMessage: "This variant is out of stock."));
+    if (qty <= 0) {
+      emit(state.copyWith(errorMessage: "Quantity must be at least 1."));
       return;
     }
 
-    if (state.quantity > available) {
-      emit(state.copyWith(
-          errorMessage: "Only $available item(s) left in stock."));
+    // final safety check against the product model (client-side)
+    final available = product.availableQuantity(color: color, size: size);
+    if (available < qty) {
+      emit(state.copyWith(errorMessage: "Only $available item(s) left in stock."));
       return;
     }
 
+    // Use isAdding flag for add-to-cart operation (separate from isLoading which is product load)
+    emit(state.copyWith(isAdding: true, errorMessage: null));
     try {
-      for (int i = 0; i < state.quantity; i++) {
-        await _cartService.addToCart(product);
-      }
-      emit(state.copyWith(errorMessage: null));
+      // single call: add requested quantity of the selected variant
+      await _cartService.addToCart(product, qty: qty, color: color, size: size);
+
+      // success — reset isAdding and keep other state
+      emit(state.copyWith(isAdding: false, errorMessage: null));
     } catch (e) {
-      emit(state.copyWith(errorMessage: "Failed to add to cart: $e"));
+      emit(state.copyWith(isAdding: false, errorMessage: "Failed to add to cart: $e"));
     }
   }
 }
