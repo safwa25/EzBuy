@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../cart/mycart.dart';
 import 'blocs/product_detail_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'models/product_model.dart';
 import '../favorite/favorite_services.dart';
 
 List<String> sortSizes(List<String> sizes) {
@@ -32,7 +29,6 @@ class ProductDetailPage extends StatelessWidget {
     return BlocProvider(
       create: (_) {
         final bloc = ProductDetailBloc()..add(LoadProduct(productId));
-        // it's safer to dispatch initial selection after load; leaving as-is is okay
         if (initialSelectedColor != null) {
           bloc.add(SelectColor(initialSelectedColor!));
         }
@@ -93,7 +89,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
     'pink': Colors.pink,
   };
 
-  // track isAdding transitions
+
   bool _wasAdding = false;
 
   void _showMessage(String message, {bool error = false}) {
@@ -123,15 +119,15 @@ class _ProductDetailViewState extends State<ProductDetailView> {
         ),
       ),
 
-      // Bottom bar uses BLoC state; button will dispatch one event only.
+
       bottomNavigationBar: BlocConsumer<ProductDetailBloc, ProductDetailState>(
         listener: (context, state) {
-          // show errors
+
           if (state.errorMessage != null) {
             _showMessage(state.errorMessage!, error: true);
           }
 
-          // detect transition: was adding -> now not adding and no error => success
+
           if (_wasAdding && !state.isAdding && state.errorMessage == null) {
             _showMessage('Item added to cart!');
             if (mounted) {
@@ -139,7 +135,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             }
           }
 
-          // update tracker
+
           _wasAdding = state.isAdding;
         },
         builder: (context, state) {
@@ -186,7 +182,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        // disable when loading product OR when adding to cart
+
                         onPressed: (widget.isLoggedIn && state.canAddToCart && !state.isLoading && !state.isAdding)
                             ? () {
                                 bloc.add(const AddToCartPressed());
@@ -218,7 +214,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       body: BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
           if (state.isLoading && state.product == null) {
-            // still loading product data
+
             return const Center(child: CircularProgressIndicator());
           }
 

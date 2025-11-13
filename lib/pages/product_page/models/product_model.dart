@@ -10,11 +10,7 @@ class Product {
   final List<String> colors;
   final String? category;
 
-  /// stock structure:
-  /// {
-  ///   "colorA": { "sizeS": 5, "sizeM": 3 },
-  ///   "colorB": { "sizeS": 2, "sizeL": 10 }
-  /// }
+
   final Map<String, Map<String, int>>? stock;
 
   bool isFavorite;
@@ -69,12 +65,11 @@ class Product {
     );
   }
 
-  /// Returns available quantity for given color/size.
-  /// If both color and size null -> returns total stock across all variants.
+
   int availableQuantity({String? color, String? size}) {
     if (stock == null || stock!.isEmpty) return 0;
     if (color == null && size == null) {
-      // sum all
+
       return stock!.values
           .map((sizesMap) => sizesMap.values.fold<int>(0, (a, b) => a + b))
           .fold<int>(0, (a, b) => a + b);
@@ -88,7 +83,7 @@ class Product {
         return sizesMap[size] ?? 0;
       }
     } else {
-      // color null, size provided -> sum that size across all colors
+
       int sum = 0;
       stock!.forEach((_, sizesMap) {
         sum += (sizesMap[size] ?? 0);
@@ -97,13 +92,13 @@ class Product {
     }
   }
 
-  /// convenience check
+
   bool isAvailable(int requiredQty, {String? color, String? size}) {
     return availableQuantity(color: color, size: size) >= requiredQty;
   }
 
   Map<String, dynamic> toMap() {
-    // convert stock to Map<String, dynamic>
+
     final stockMap = stock?.map((c, sizesMap) {
       return MapEntry(
           c,
