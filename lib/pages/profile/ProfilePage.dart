@@ -5,9 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'purchase_history_page.dart';
 import '../../auth/auth_services.dart';
 import '../../core/app/wrapper.dart';
 import '../../core/theme/colors.dart';
@@ -118,8 +117,10 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 20),
               _buildProfileCard(isDark, userData!),
               const SizedBox(height: 20),
-                _buildChangePasswordButton(isDark),
-                 const SizedBox(height: 30),
+              _buildPurchaseHistoryButton(isDark),
+              const SizedBox(height: 20),
+              _buildChangePasswordButton(isDark),
+              const SizedBox(height: 30),
               _buildLogoutButton(),
             ],
           ),
@@ -270,8 +271,41 @@ class _ProfilePageState extends State<ProfilePage> {
       ],
     );
   }
+  Widget _buildPurchaseHistoryButton(bool isDark) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const PurchaseHistoryPage(),
+            ),
+          );
+        },
+        icon: const Icon(Icons.history, color: Colors.white),
+        label: Text(
+          'Purchase History',
+          style: GoogleFonts.cairo(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isDark ? Colors.teal.shade600 : Colors.blue.shade700,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 5,
+        ),
+      ),
+    );
+  }
 
-Widget _buildChangePasswordButton(bool isDark) {
+
+  Widget _buildChangePasswordButton(bool isDark) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
