@@ -108,6 +108,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       selectedSize: event.size,
       availableStock: available,
       isOutOfStock: available == 0,
+      quantity: 1,
       errorMessage: null,
       quantity: available > 0 ? 1 : 0, // reset or zero if OOS
     ));
