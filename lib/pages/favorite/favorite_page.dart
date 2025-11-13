@@ -296,22 +296,6 @@ class _FavoritePageState extends State<FavoritePage> {
                       color: Colors.orange.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.add_shopping_cart_rounded,
-                        color: Colors.orange,
-                        size: 22,
-                      ),
-                      onPressed: () async {
-                        await _cartService.addToCart(product);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Added to cart'),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
-                    ),
                   ),
                 ],
               ),

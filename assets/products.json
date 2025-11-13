@@ -112,5 +112,187 @@
       "White": {"S": 10, "M": 9, "L": 8, "XL": 7},
       "Beige": {"S": 8, "M": 7, "L": 6, "XL": 5}
     }
+  },
+  {
+    "id": "p007",
+    "name": "Arachnid Pendant Necklace",
+    "price": 85,
+    "category": "Accessories",
+    "imageUrl": [
+      "https://i.imgur.com/K4Q3N36.jpeg",
+      "https://i.imgur.com/C978rbC.jpeg",
+      "https://i.imgur.com/AEtkavy.jpeg",
+      "https://i.imgur.com/TEWotuP.jpeg"
+    ],
+    "description": "A bold and edgy necklace featuring a spider-shaped pendant with intricate detailing. Designed to stand out, this piece blends gothic charm with modern elegance, making it perfect for those who embrace unique fashion statements.",
+    "stock": {
+      "Black": {"One Size": 10},
+      "Red": {"One Size": 8},
+      "Green": {"One Size": 6},
+      "Purple": {"One Size": 5}
+    }
+  },
+  {
+    "id": "p008",
+    "name": "Midnight Mesh Wristwatch",
+    "price": 110,
+    "category": "Accessories",
+    "imageUrl": [
+      "https://i.imgur.com/5tcATIK.jpeg",
+      "https://i.imgur.com/xP05Cn7.jpeg",
+      "https://i.imgur.com/PbVeCO1.jpeg"
+    ],
+    "description": "A modern minimalist wristwatch featuring a sleek mesh metal band and a clean, all-black dial. Designed for elegance and simplicity, this timepiece is perfect for both formal occasions and everyday wear.",
+    "stock": {
+      "Black": {"One Size": 12},
+      "Silver": {"One Size": 10}
+    }
+  },
+  {
+    "id": "p009",
+    "name": "Cukur Symbol Baseball Cap",
+    "price": 45,
+    "category": "Accessories",
+    "imageUrl": [
+      "https://i.imgur.com/DJSOMJP.jpeg",
+      "https://i.imgur.com/fY8h6A3.jpeg",
+      "https://i.imgur.com/ZlZgSzW.jpeg"
+    ],
+    "description": "A sleek black baseball cap featuring the iconic Cukur symbol embroidered on the front. Crafted for fans of the legendary series, this cap blends streetwear edge with cultural flair, making it a standout piece in any wardrobe.",
+    "stock": {
+      "Black": {"One Size": 15}
+    }
+  },
+  {
+    "id": "p010",
+    "name": "Regal Roman Mesh Watch",
+    "price": 135,
+    "category": "Accessories",
+    "imageUrl": [
+      "https://i.imgur.com/IQks9Ou.jpeg",
+      "https://i.imgur.com/eqEGvo0.jpeg",
+      "https://i.imgur.com/HC3DJyt.jpeg"
+    ],
+    "description": "A refined wristwatch featuring a minimalist black dial with Roman numeral accents and a polished mesh band. The gold or silver casing adds a touch of sophistication, making it an ideal choice for formal wear or upscale casual looks.",
+    "stock": {
+      "Gold": {"One Size": 10},
+      "Silver": {"One Size": 9}
+    }
+  },
+  {
+    "id": "p011",
+    "name": "I ♥ EXTREME Mascara Trio",
+    "price": 35,
+    "category": "Makeup",
+    "imageUrl": [
+      "https://i.imgur.com/Sr8Az06.jpeg",
+      "https://i.imgur.com/MFM3c4U.jpeg",
+      "https://i.imgur.com/XiI7Gjm.jpeg",
+      "https://i.imgur.com/Bkm43kq.jpeg"
+    ],
+    "description": "A bold trio of volumizing mascaras designed to suit every lash need—from classic volume to waterproof wear and dramatic flair. Each formula features a unique brush for maximum impact and long-lasting definition.",
+    "stock": {
+      "Black": {"One Size": 20},
+      "Blue": {"One Size": 15},
+      "Pink": {"One Size": 18}
+    }
+  },
+  {
+    "id": "p012",
+    "name": "Pixi On-the-Glow Blush Sticks",
+    "price": 32,
+    "category": "Makeup",
+    "imageUrl": [
+      "https://i.imgur.com/Kv3IX6Z.jpeg",
+      "https://i.imgur.com/Kv3IX6Z.jpeg",
+      "https://i.imgur.com/vMhYRUP.jpeg",
+      "https://i.imgur.com/019FCcw.jpeg",
+      "https://i.imgur.com/b5ANgLA.jpeg"
+    ],
+    "description": "A radiant collection of blush sticks designed to deliver a fresh, dewy glow. Each shade adapts beautifully to your skin tone, offering buildable color and a smooth, hydrating finish for cheeks on the go.",
+    "stock": {
+      "Cheektone": {"One Size": 20},
+      "Fleur": {"One Size": 18},
+      "Juicy": {"One Size": 16},
+      "Ruby": {"One Size": 15}
+    }
+  },
+  {
+    "id": "p013",
+    "name": "KIKO MILANO Glossy Shine Lip Collection",
+    "price": 40,
+    "category": "Makeup",
+    "imageUrl": [
+      "https://i.imgur.com/EtgT04p.jpeg",
+      "https://i.imgur.com/jKH9kBc.jpeg",
+      "https://i.imgur.com/J3UCkdb.jpeg",
+      "https://i.imgur.com/sIE1gGv.jpeg"
+    ],
+    "description": "A dazzling collection of high-shine lip glosses from KIKO MILANO, offering a range of shades from soft shimmer to bold berry tones. Each gloss delivers rich pigment, smooth texture, and a luminous finish for every mood and occasion.",
+    "stock": {
+      "Champagne": {"One Size": 12},
+      "Rosy Pink": {"One Size": 14},
+      "Strawberry Glaze": {"One Size": 10},
+      "Cherry Sparkle": {"One Size": 9},
+      "Crimson Kiss": {"One Size": 11},
+      "Berry Rouge": {"One Size": 8},
+      "Golden Glow": {"One Size": 10},
+      "Ruby Shine": {"One Size": 7}
+    }
+  },
+  {
+    "id": "p014",
+    "name": "MAC Vibrant Eyeshadow Trio",
+    "price": 38,
+    "category": "Makeup",
+    "imageUrl": [
+      "https://i.imgur.com/VYauFYc.jpeg",
+      "https://i.imgur.com/bmf9ka6.jpeg",
+      "https://i.imgur.com/BwTAo65.jpeg",
+      "https://i.imgur.com/oXrQNJw.jpeg",
+      "https://i.imgur.com/8AuomCu.jpeg"
+    ],
+    "description": "A striking trio of MAC eyeshadows designed to deliver intense pigment and smooth blendability. From bold magenta to soft pink and adaptive Cheektone, these shades offer versatile looks for day or night glam.",
+    "stock": {
+      "Magenta": {"One Size": 15},
+      "Light Pink": {"One Size": 12},
+      "Cheektone": {"One Size": 10}
+    }
+  },
+  {
+    "id": "p015",
+    "name": "Drip Art Custom Air Force 1",
+    "price": 220,
+    "category": "Shoes",
+    "imageUrl": [
+      "https://i.imgur.com/f8c5BrF.jpeg",
+      "https://i.imgur.com/G1U6zrH.jpeg",
+      "https://i.imgur.com/LNc8c6C.jpeg",
+      "https://i.imgur.com/K6vgJyK.jpeg"
+    ],
+    "description": "A visually striking pair of custom Nike Air Force 1 sneakers featuring a dripping paint design that blends street art with sneaker culture. Each colorway offers a unique artistic flair, perfect for collectors and trendsetters alike.",
+    "stock": {
+
+      "White and Blue": {"38": 5, "39": 5, "40": 4, "41": 3, "42": 2, "43": 2},
+      "White and Black": {"38": 6, "39": 5, "40": 4, "41": 3, "42": 2, "43": 2},
+      "Magenta": {"38": 3, "39": 3, "40": 2, "41": 2, "42": 1, "43": 1},
+      "Blue and Black": {"38": 4, "39": 4, "40": 3, "41": 2, "42": 2, "43": 1}
+    }
+  },
+  {
+    "id": "p016",
+    "name": "Attack on Titan Scout Regiment Tee",
+    "price": 60,
+    "category": "Clothes",
+    "imageUrl": [
+      "https://i.imgur.com/FsdhWeW.jpeg",
+      "https://i.imgur.com/lU8FAq7.jpeg",
+      "https://i.imgur.com/sHZqYiJ.jpeg"
+    ],
+    "description": "Show your allegiance to the Scout Regiment with this officially inspired Attack on Titan t-shirt. Featuring the iconic wings emblem on a premium cotton base, this tee is perfect for fans who want to wear their fandom with pride.",
+    "stock": {
+      "White": {"S": 10, "M": 9, "L": 8, "XL": 7},
+      "Black": {"S": 12, "M": 10, "L": 9, "XL": 8}
+    }
   }
 ]

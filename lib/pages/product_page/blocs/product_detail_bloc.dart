@@ -40,11 +40,26 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
   }
 
   void _onSelectColor(SelectColor event, Emitter<ProductDetailState> emit) {
+    final product = state.product;
+    if (product == null) return;
+
+    final color = event.color;
+    final stockMap = product.stock?[color];
+
+    int available = 0;
+    String? size;
+
+    if (stockMap != null && stockMap.keys.length == 1 && stockMap.containsKey("One Size")) {
+      size = "One Size";
+      available = stockMap["One Size"] ?? 0;
+    }
+
     emit(state.copyWith(
       selectedColor: event.color,
-      selectedSize: null,
-      availableStock: 0,
-      isOutOfStock: false,
+      selectedSize: size,
+      availableStock: available,
+      isOutOfStock: available == 0 ,
+      quantity: 1,
       errorMessage: null,
     ));
   }
@@ -60,6 +75,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       selectedSize: event.size,
       availableStock: available,
       isOutOfStock: available == 0,
+      quantity: 1,
       errorMessage: null,
     ));
   }

@@ -174,42 +174,6 @@ class _ProductCardState extends State<ProductCard> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          if (widget.showBuyButton)
-                            Container(
-                              width: 38,
-                              height: 38,
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.add_shopping_cart,
-                                  size: 20,
-                                  color: Colors.orange,
-                                ),
-                                onPressed: () async {
-                                  try {
-                                    await cartService.addToCart(widget.product);
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content:
-                                            Text("Product added to cart!"),
-                                        duration: Duration(seconds: 2),
-                                      ),
-                                    );
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                            "Failed to add to cart: $e"),
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
                         ],
                       ),
                     ],
