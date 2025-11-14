@@ -1,14 +1,14 @@
 import 'package:ezbuy/pages/product_page/product_list_page.dart';
 import 'package:ezbuy/pages/product_page/welcomescreen.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; 
+import 'package:google_fonts/google_fonts.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/gradient_button.dart';
 import '../utils/validators.dart';
 import 'signup_screen.dart';
 import 'auth_services.dart';
-import '../widgets/google_signin_button.dart'; 
+import '../widgets/google_signin_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 MaterialPageRoute(
                   builder: (context) => const ProductListPage(isLoggedIn: true),
                 ),
-                    (Route<dynamic> route) => false,
+                (Route<dynamic> route) => false,
               );
             } else {
               _showSnackBar('Login Failed. Please try again.', Colors.red);
@@ -56,10 +56,9 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
   void _signInWithGoogle() async {
     final user = await authServiceNotifier.value.signInWithGoogle();
-    
+
     if (user != null) {
       _showSnackBar('Login Successful with Google!', Colors.green);
       Navigator.push(
@@ -120,18 +119,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 _buildForgotPassword(),
                 const SizedBox(height: 20),
                 _buildSignInButton(),
-                
-               
+
                 GoogleSignInButton(
                   onPressed: _signInWithGoogle,
                   buttonText: 'Continue with Google',
                   showDivider: true,
                 ),
-                
-                
+
                 const SizedBox(height: 20),
-                    _buildGuestLoginButton(),
-                
+                _buildGuestLoginButton(),
+
                 const SizedBox(height: 30),
                 _buildSignUpPrompt(),
               ],
@@ -224,23 +221,19 @@ class _LoginScreenState extends State<LoginScreen> {
     return GradientButton(text: "Log In", onPressed: _submitForm);
   }
 
-
   Widget _buildGuestLoginButton() {
     return OutlinedButton.icon(
       onPressed: _continueAsGuest,
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        side: const BorderSide(color: Color.fromARGB(255, 225, 222, 222), width: 1.5),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+        side: const BorderSide(
+          color: Color.fromARGB(255, 225, 222, 222),
+          width: 1.5,
         ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         minimumSize: const Size(double.infinity, 56),
       ),
-      icon: const Icon(
-        Icons.person_outline,
-        color: Colors.black87,
-        size: 24,
-      ),
+      icon: const Icon(Icons.person_outline, color: Colors.black87, size: 24),
       label: Text(
         "Continue AS a Guest",
         style: GoogleFonts.poppins(
@@ -251,7 +244,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
 
   Widget _buildSignUpPrompt() {
     return Row(
@@ -281,48 +273,55 @@ class _LoginScreenState extends State<LoginScreen> {
 void _showResetPasswordSheet(context) {
   showModalBottomSheet(
     context: context,
+    backgroundColor: Colors.white,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
     ),
     builder: (context) {
       final emailController = TextEditingController();
 
-      return Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Reset Password",
-              style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
+      return Theme(
+        data: ThemeData.light(),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Reset Password",
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            SizedBox(height: 14),
-            CustomTextField(
-              controller: emailController,
-              hint: "Enter your email",
-              icon: Icons.email,
-            ),
-            SizedBox(height: 20),
-            GradientButton(
-              text: "Send Reset Link",
-              fontSize: 20,
-              onPressed: () async {
-                final email = emailController.text.trim();
-                await authServiceNotifier.value.sendPasswordResetEmail(email);
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Reset email sent!", style: GoogleFonts.poppins(fontSize: 18)),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 14),
-          ],
+              SizedBox(height: 14),
+              CustomTextField(
+                controller: emailController,
+                hint: "Enter your email",
+                icon: Icons.email,
+              ),
+              SizedBox(height: 20),
+              GradientButton(
+                text: "Send Reset Link",
+                fontSize: 20,
+                onPressed: () async {
+                  final email = emailController.text.trim();
+                  await authServiceNotifier.value.sendPasswordResetEmail(email);
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Reset email sent!",
+                        style: GoogleFonts.poppins(fontSize: 18),
+                      ),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 14),
+            ],
+          ),
         ),
       );
     },
