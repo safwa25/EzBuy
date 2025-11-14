@@ -202,7 +202,10 @@ class _CartPageState extends State<CartPage> {
                         context,
                         MaterialPageRoute(
                           builder: (_) =>
-                              ProductDetailPage(productId: item.productId),
+                              ProductDetailPage(
+                                productId: item.productId,
+                                isLoggedIn: true,
+                              ),
                         ),
                       );
                     },

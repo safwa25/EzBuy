@@ -89,8 +89,11 @@ class _ProductDetailViewState extends State<ProductDetailView> {
     'pink': Colors.pink,
   };
 
-
   bool _wasAdding = false;
+
+
+  late final PageController _pageController;
+  int _currentPage = 0;
 
   void _showMessage(String message, {bool error = false}) {
     if (!mounted) return;
@@ -103,30 +106,37 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
-        title: BlocBuilder<ProductDetailBloc, ProductDetailState>(
-          builder: (context, state) {
-            return Text(
-              state.product?.name ?? "Product Detail",
-              style: GoogleFonts.cairo(fontSize: 24, fontWeight: FontWeight.bold),
-            );
-          },
-        ),
+        title: BlocBuilder<ProductDetailBloc, ProductDetailState>(builder: (context, state) {
+          return Text(
+            state.product?.name ?? "Product Detail",
+            style: GoogleFonts.cairo(fontSize: 24, fontWeight: FontWeight.bold),
+          );
+        }),
       ),
-
 
       bottomNavigationBar: BlocConsumer<ProductDetailBloc, ProductDetailState>(
         listener: (context, state) {
-
           if (state.errorMessage != null) {
             _showMessage(state.errorMessage!, error: true);
           }
-
 
           if (_wasAdding && !state.isAdding && state.errorMessage == null) {
             _showMessage('Item added to cart!');
@@ -134,7 +144,6 @@ class _ProductDetailViewState extends State<ProductDetailView> {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const CartPage()));
             }
           }
-
 
           _wasAdding = state.isAdding;
         },
@@ -185,22 +194,22 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
                         onPressed: (widget.isLoggedIn && state.canAddToCart && !state.isLoading && !state.isAdding)
                             ? () {
-                                bloc.add(const AddToCartPressed());
-                              }
+                          bloc.add(const AddToCartPressed());
+                        }
                             : null,
                         child: state.isAdding
                             ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                              )
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        )
                             : Text(
-                                "Add to Cart",
-                                style: GoogleFonts.cairo(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                          "Add to Cart",
+                          style: GoogleFonts.cairo(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -214,7 +223,6 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       body: BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
           if (state.isLoading && state.product == null) {
-
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -223,26 +231,77 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             return const Center(child: Text('Product not found'));
           }
 
+
+          final totalImages = product.images.length;
+          if (_currentPage >= totalImages && totalImages > 0) {
+            _currentPage = totalImages - 1;
+          }
+
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (product.images.isNotEmpty)
+
                   SizedBox(
                     height: 300,
-                    child: PageView.builder(
-                      itemCount: product.images.length,
-                      itemBuilder: (context, index) => ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: Image.network(
-                          product.images[index],
-                          fit: BoxFit.cover,
-                          width: double.infinity,
+                    child: Stack(
+                      children: [
+                        PageView.builder(
+                          controller: _pageController,
+                          itemCount: product.images.length,
+                          onPageChanged: (index) {
+                            setState(() {
+                              _currentPage = index;
+                            });
+                          },
+                          itemBuilder: (context, index) => ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              product.images[index],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
+                          ),
                         ),
-                      ),
+
+
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 12,
+                          child: Center(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.35),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: List.generate(product.images.length, (i) {
+                                  final bool active = i == _currentPage;
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                                    width: active ? 12 : 8,
+                                    height: active ? 12 : 8,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: active ? Colors.white : Colors.white.withOpacity(0.6),
+                                      border: active ? Border.all(color: Colors.black12) : null,
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+
                 const SizedBox(height: 24),
 
                 Text(
@@ -324,8 +383,8 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                         IconButton(
                           onPressed: state.quantity > 1
                               ? () {
-                                  context.read<ProductDetailBloc>().add(ChangeQuantity(state.quantity - 1));
-                                }
+                            context.read<ProductDetailBloc>().add(ChangeQuantity(state.quantity - 1));
+                          }
                               : null,
                           icon: const Icon(Icons.remove_circle_outline),
                           color: Colors.grey.shade700,
@@ -350,13 +409,13 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                         IconButton(
                           onPressed: (state.availableStock > 0 && state.quantity < state.availableStock)
                               ? () {
-                                  context.read<ProductDetailBloc>().add(ChangeQuantity(state.quantity + 1));
-                                }
+                            context.read<ProductDetailBloc>().add(ChangeQuantity(state.quantity + 1));
+                          }
                               : () {
-                                  if (state.availableStock > 0 && state.quantity >= state.availableStock) {
-                                    _showMessage("Only ${state.availableStock} in stock!", error: true);
-                                  }
-                                },
+                            if (state.availableStock > 0 && state.quantity >= state.availableStock) {
+                              _showMessage("Only ${state.availableStock} in stock!", error: true);
+                            }
+                          },
                           icon: const Icon(Icons.add_circle_outline),
                           color: Colors.grey.shade700,
                           iconSize: 28,
