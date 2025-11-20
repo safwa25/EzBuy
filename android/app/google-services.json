@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "697316165791-4bflnnmlmj8bh8otmr1pst9dltadv1e8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ezbuy",
+            "certificate_hash": "69ba7f2443cc491765188c36d570ff0ff79e2f80"
+          }
+        },
+        {
           "client_id": "697316165791-nc05p7ddfh453v3g6dkudso41h9g6ae4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.ezbuy",
             "certificate_hash": "cad59816138bd334fc5827a9bb22a3c5db827e8a"
+          }
+        },
+        {
+          "client_id": "697316165791-ncqejl9u2vm86tvchaief4becghj9g3u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ezbuy",
+            "certificate_hash": "daaf6bb9802ce1d25f0a482f75aa2b785ccbfa74"
           }
         },
         {
