@@ -139,6 +139,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 ),
                 const SizedBox(height: 8),
                 CustomTextField(
+
                   controller: _currentPasswordController,
                   hint: "enter Current Password",
                   icon: Icons.lock_outline,

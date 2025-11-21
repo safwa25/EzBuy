@@ -22,16 +22,18 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Color.fromARGB(255, 44, 43, 43)),
+      style: TextStyle(color: isDark ? Colors.white : const Color.fromARGB(255, 44, 43, 43)),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Color.fromARGB(255, 44, 43, 43)),
+        hintStyle:  TextStyle(color: isDark ? Colors.white : const Color.fromARGB(255, 44, 43, 43)),
         prefixIcon: Icon(icon, color: Color.fromARGB(255, 44, 43, 43)),
-        suffixIcon: _buildSuffixIcon(),
+        suffixIcon: _buildSuffixIcon(isDark),
         filled: true,
         // ignore: deprecated_member_use
         fillColor: const Color.fromARGB(255, 168, 167, 167).withOpacity(0.1),
@@ -44,13 +46,13 @@ class CustomTextField extends StatelessWidget {
     );
   }
 
-  Widget? _buildSuffixIcon() {
+  Widget? _buildSuffixIcon(isDark) {
     if (onToggleVisibility == null) return null;
 
     return IconButton(
       icon: Icon(
         obscureText ? Icons.visibility_off : Icons.visibility,
-        color: Colors.black,
+        color: isDark ? Colors.white : Colors.black,
       ),
       onPressed: onToggleVisibility,
     );
