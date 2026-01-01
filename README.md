@@ -69,6 +69,40 @@ Cross-cutting
 
 ---
 
+
+## 🔐 Authentication & Security (Firebase)
+
+EzBuy uses **Firebase Authentication** to provide a secure and flexible user authentication system.
+
+### Supported Authentication Methods
+- **Email & Password Authentication**
+  - Users can sign up and log in using email and password.
+- **Google Sign-In**
+  - Users can authenticate quickly using their Google account.
+
+### Password Reset & Update Options
+
+EzBuy supports **two password management flows**:
+
+#### 1️⃣ Password Reset via Email (Outside the App)
+- Users can request a password reset from the login screen.
+- Firebase sends an automatic **password reset email** to the user’s registered email (e.g., Gmail).
+- The email contains a **secure Firebase link** that allows the user to set a new password outside the app.
+
+#### 2️⃣ Password Update Inside the App
+- Logged-in users can update their password from within the application.
+- The user must:
+  - Enter the **current (old) password**
+  - Enter and confirm the **new password**
+- Firebase securely validates and updates the credentials.
+
+### Security Notes
+- Authentication is fully managed by **Firebase Auth**.
+- Secure tokens are used to maintain user sessions.
+- Sensitive data is never stored in plain text.
+
+---
+
 ## 🔁 Major Flows (How the app behaves)
 - App start: splash → check token → home or auth
 - Authentication: input → validation → API → token saved → navigate
@@ -115,6 +149,3 @@ State management
 Images & media
 - cached_network_image — image caching + placeholders
 
-
-Push, Store & monitoring
-- firebase_messaging — firedata base
