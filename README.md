@@ -58,14 +58,8 @@ Orders
 Profile & Settings
 - Update profile & addresses
 
-Admin (optional)
-- Product & order management tools for admins
-
 Shared components
 - ProductCard, RatingWidget, QuantitySelector, AppTheme
-
-Cross-cutting
-- Logging, analytics, error mapping, i18n
 
 ---
 
@@ -111,8 +105,6 @@ EzBuy supports **two password management flows**:
 - Add to cart: local upsert, persist, update UI
 - Checkout: create payment intent → on success place order → clear cart → confirmation
 - Orders: fetch & cache history → details & tracking
-- Notifications: FCM → open → navigate to relevant screen
-- Offline: reads from cache; writes queued & synced on reconnect
 
 Error handling
 - Friendly messages, retry UI for recoverable errors, crash reporting for unexpected exceptions.
