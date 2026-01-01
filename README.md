@@ -1,16 +1,120 @@
-# ezbuy
+_Last updated: 2026-01-01_
 
-A new Flutter project.
+Welcome to EzBuy — Flutter e‑commerce app built as a DEPI graduation project. Whether you’re browsing, buying, or building features, this README walks you through everything in an accessible.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## ✨ Features (What EzBuy Can Do)
+- 🔐 User authentication: signup, login, token refresh
+- 🛒 Product browsing: categories, pagination, search
+- 📦 Product details: images, variants, reviews
+- 🧺 Persistent cart: survives app restarts
+- 💳 Checkout flow: shipping, addresses, payments
+- 🧾 Order history & tracking
+- 🙋 Profile & address management
+- 🔔 Push notifications for order updates (FCM)
+- 🌐 Offline-friendly reads + queued writes for sync
+- 🛠️ Optional admin features for product/order management
 
-A few resources to get you started if this is your first Flutter project:
+Short version: a full shopping app with the developer-friendly structure to extend, test, and ship. 🚀
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## 📱 App Tour — What the user sees
+- Splash → Auth check → Home screen with product categories
+- Product list & search with lazy loading
+- Product details: zoomable images, reviews, variants
+- Add-to-cart, change quantities, persistent cart badge
+- Smooth checkout: address selection, shipping, payment
+- Order confirmation & order history
+- Push notifications take you straight to the order details
+
+It's designed to be pleasant, familiar, and snappy — like window shopping with a nice latte. ☕️
+
+---
+
+## 🧩 Modules (Who does what — quick cheat sheet)
+
+Auth
+- Login/Signup, token storage, profile
+- Key: AuthRepository, AuthBloc/Cubit, flutter_secure_storage
+
+Products
+- List, search, product details
+- Key: ProductRepository, ProductBloc, ProductDTOs
+
+Cart
+- Add/remove, quantities, persistent local state
+- Key: CartRepository, CartCubit, CartLocalDataSource
+
+Checkout & Payments
+- Shipping, addresses, payment intent, place order
+- Key: CheckoutBloc, PaymentService (Stripe/other SDK)
+
+Orders
+- Order history, details, status updates
+- Key: OrdersRepository, OrdersScreen
+
+Profile & Settings
+- Update profile & addresses
+
+Admin (optional)
+- Product & order management tools for admins
+
+Shared components
+- ProductCard, RatingWidget, QuantitySelector, AppTheme
+
+Cross-cutting
+- Logging, analytics, error mapping, i18n
+
+---
+
+## 🔁 Major Flows (How the app behaves)
+- App start: splash → check token → home or auth
+- Authentication: input → validation → API → token saved → navigate
+- Browse/search: debounced queries → paginated results → product taps
+- Product details: fetch or reuse cached item → show variants → add to cart
+- Add to cart: local upsert, persist, update UI
+- Checkout: create payment intent → on success place order → clear cart → confirmation
+- Orders: fetch & cache history → details & tracking
+- Notifications: FCM → open → navigate to relevant screen
+- Offline: reads from cache; writes queued & synced on reconnect
+
+Error handling
+- Friendly messages, retry UI for recoverable errors, crash reporting for unexpected exceptions.
+
+---
+
+## 🔧 Setup & Local Development
+
+Prerequisites
+- Flutter SDK (stable; recommended >= 3.x)
+- Dart SDK
+- Android Studio / Xcode (for device builds)
+- Node / json-server (optional for local mock API)
+
+Clone
+```bash
+git clone https://github.com/safwa25/EzBuy.git
+cd EzBuy
+```
+
+
+## 🛠️ Used Tech (Stack & Libraries)
+
+EzBuy uses a practical, modern Flutter stack. These are the libraries and tools used or recommended — friendly to contributors and production-ready.
+
+Platform & language
+- Flutter — cross-platform UI toolkit
+- Dart — programming language
+
+State management
+- flutter_bloc (Bloc / Cubit) — recommended
+
+
+Images & media
+- cached_network_image — image caching + placeholders
+
+
+Push, Store & monitoring
+- firebase_messaging — firedata base
